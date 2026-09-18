@@ -1,0 +1,116 @@
+body {
+    margin: 0;
+    background: black;
+    text-align: center;
+    overflow: hidden;
+}
+
+h1 {
+    margin: 10px 0 5px;
+    color: white;
+}
+
+#score {
+    color: white;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+#game {
+    position: relative;
+    width: 991px;
+    height: 711px;
+    margin: auto;
+    overflow: hidden;
+}
+
+/* 板を重ねるための基本設定 */
+.board {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 991px;
+    height: 711px;
+    pointer-events: none;
+}
+
+/* 奥 → 手前 */
+.mountain       { z-index: 1; }
+.soil           { z-index: 2; }
+.field-soil     { z-index: 4; }
+.field-soil2    { z-index: 5; }
+.house          { z-index: 7; }
+.grass          { z-index: 9; }
+.soil-middle    { z-index: 11; }
+.tree           { z-index: 12; }
+.water          { z-index: 14; }
+.water2         { z-index: 15; }
+.grass-front    { z-index: 16; }
+.soil-front     { z-index: 17; }
+.grass-front-most { z-index: 18; }
+.soil-front-most { z-index: 19; }
+.fence          { z-index: 20; }
+
+/* 的を入れる場所 */
+#blue-targets {
+    position: absolute;
+    z-index: 3;
+}
+
+#purple-targets {
+    position: absolute;
+    z-index: 8;
+}
+
+#red-targets {
+    position: absolute;
+    z-index: 10;
+}
+
+#yellow-targets {
+    position: absolute;
+    z-index: 13;
+}
+
+/* 照準 */
+#crosshair {
+    position: absolute;
+    z-index: 100;
+    color: white;
+    font-size: 50px;
+    pointer-events: none;
+}
+#green-targets {
+    position: absolute;
+    z-index: 21;
+}
+
+#orange-targets {
+    position: absolute;
+    z-index: 22;
+}
+.sky-background {
+    z-index: 0;
+}
+.game-frame {
+    z-index: 90;
+    pointer-events: none;
+}
+
+.player-cursor {
+    position: absolute;
+    font-size: 35px;
+    width: 45px;
+    height: 45px;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+}
+
+.left-cursor {
+    color: blue;
+}
+
+.right-cursor {
+    color: red;
+}
