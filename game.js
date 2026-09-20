@@ -1,4 +1,68 @@
 /* =========================
+   30秒タイマー
+========================= */
+/* =========================
+   ゲーム状態
+========================= */
+
+let timeLeft = 30;
+
+let gameOver = false;
+
+let gameStarted = false;
+
+let practiceMode = false;
+
+
+/* =========================
+   30秒タイマー
+========================= */
+
+const timerText = document.getElementById("timer");
+
+let gameTimer = null;
+
+const gameArea = document.getElementById("game");
+function startGameTimer() {
+
+    timeLeft = 30;
+
+    gameOver = false;
+
+    timerText.textContent = "Time: 30";
+
+
+    gameTimer = setInterval(function () {
+
+        timeLeft--;
+
+        timerText.textContent =
+            "Time: " + timeLeft;
+
+
+        if (timeLeft <= 0) {
+
+    clearInterval(gameTimer);
+
+    gameOver = true;
+    gameStarted = false;
+
+    timerText.textContent = "Time: 0";
+
+    // 幕を閉める
+    gameArea.classList.remove("curtain-open");
+    gameArea.classList.add("curtain-close");
+
+    // 0.8秒後に最終得点を表示
+    setTimeout(function () {
+        showFinalScore();
+    }, 800);
+}
+    }, 1000);
+
+}
+
+/* =========================
    2人プレイ・シューティングゲーム
    マウス + Joy-Con 2台
 ========================= */
@@ -34,8 +98,8 @@ const rightCursor = document.createElement("div");
 leftCursor.className = "player-cursor left-cursor";
 rightCursor.className = "player-cursor right-cursor";
 
-leftCursor.textContent = "🎯";
-rightCursor.textContent = "🎯";
+leftCursor.textContent = "🩷";
+rightCursor.textContent = "🩵";
 
 game.appendChild(leftCursor);
 game.appendChild(rightCursor);
@@ -85,7 +149,7 @@ function addTarget(
     const target = document.createElement("img");
 
     target.src = imageFile;
-
+    target.classList.add("shooting-target");
     target.style.position = "absolute";
     target.style.left = x + "px";
     target.style.top = y + "px";
@@ -105,6 +169,40 @@ function addTarget(
         }
 
 
+        /* =========================
+           練習中
+           的は撃てるが得点なし
+        ========================= */
+
+        if (practiceMode) {
+
+            target.style.display = "none";
+
+
+            setTimeout(function () {
+
+                target.style.display = "block";
+
+            }, 500);
+
+
+            return;
+        }
+
+
+        /* =========================
+           ゲーム開始前・終了後
+        ========================= */
+
+        if (!gameStarted || gameOver) {
+            return;
+        }
+
+
+        /* =========================
+           得点
+        ========================= */
+
         if (player === "left") {
 
             leftScore += points;
@@ -122,50 +220,57 @@ function addTarget(
         updateScores();
 
 
-        // 的を消す
-        target.style.display = "none";
+        /* 的を消す */
 
+        target.classList.add("fall-back");
 
-        // 3秒後に復活
-        setTimeout(function() {
+        setTimeout(function () {
+            target.style.display = "none";
+            target.classList.remove("fall-back");
+        }, 600);
 
+        setTimeout(function () {
             target.style.display = "block";
-
-        }, 3000);
+        }, 5000);
 
     }
-
-
     /* =========================
        マウスクリック
     ========================= */
 
-    target.addEventListener("click", function(event) {
+
+    // Joy-Conから使うため保存
+    target.addEventListener("click", function (event) {
 
         event.stopPropagation();
+
+        // 時間切れなら撃てない
+        if (gameOver) {
+            return;
+        }
 
         // マウスは左プレイヤー扱い
         shootTarget("left");
 
     });
 
-
-    // Joy-Conから使うため保存
     target.shootTarget = shootTarget;
-
-
+    // ゲーム開始前は的を隠す
     container.appendChild(target);
 
     return target;
 
 }
 
-
 /* =========================
    🔵 レックス 500点
 ========================= */
 
-addTarget(
+/* =========================
+   レックス4体
+========================= */
+
+const rex1 = addTarget(
     "blue-targets",
     "レックス500.png",
     500,
@@ -173,7 +278,7 @@ addTarget(
     210
 );
 
-addTarget(
+const rex2 = addTarget(
     "blue-targets",
     "レックス500.png",
     500,
@@ -181,7 +286,7 @@ addTarget(
     210
 );
 
-addTarget(
+const rex3 = addTarget(
     "blue-targets",
     "レックス500.png",
     500,
@@ -189,7 +294,7 @@ addTarget(
     210
 );
 
-addTarget(
+const rex4 = addTarget(
     "blue-targets",
     "レックス500.png",
     500,
@@ -199,15 +304,76 @@ addTarget(
 
 
 /* =========================
+   レックスの左右移動
+========================= */
+
+// 4体をまとめる
+const rexTargets = [
+    rex1,
+    rex2,
+    rex3,
+    rex4
+];
+
+// 1 = 右、-1 = 左
+let rexDirection = 1;
+
+// 何歩動いたか
+let rexSteps = 0;
+
+// 2秒ごとに1歩
+/* =========================
+   レックス4体のなめらかな移動
+========================= */
+
+setInterval(function () {
+
+    // 10px先の位置へ、2秒かけて移動
+    rexTargets.forEach(function (rex) {
+
+        const currentX =
+            parseFloat(rex.style.left);
+
+        rex.style.transition =
+            "left 2s ease-in-out";
+
+        rex.style.left =
+            (currentX + 10 * rexDirection) + "px";
+
+        // ジャンプ
+        rex.classList.remove("rex-jump");
+
+        void rex.offsetWidth;
+
+        rex.classList.add("rex-jump");
+
+    });
+
+    rexSteps++;
+
+    // 3歩進んだら方向転換
+    if (rexSteps >= 3) {
+
+        rexDirection *= -1;
+        rexSteps = 0;
+
+    }
+
+}, 2000);
+
+
+
+
+/* =========================
    🟣 ブルズアイ 400点
 ========================= */
 
 const purple = addTarget(
     "purple-targets",
-    "ブルズアイ.png",
+    "bullseye.png",
     400,
     700,
-    250
+    200
 );
 
 
@@ -216,7 +382,7 @@ purple.style.display = "none";
 
 
 // 5秒後に出現
-setTimeout(function() {
+setTimeout(function () {
 
     purple.style.display = "block";
 
@@ -224,11 +390,37 @@ setTimeout(function() {
 
 
 // ブルズアイ専用
-purple.shootTarget = function(player) {
+purple.shootTarget = function (player) {
 
     if (purple.style.display === "none") {
         return;
     }
+
+
+    /* 練習中 */
+
+    if (practiceMode) {
+
+        purple.style.display = "none";
+
+
+        setTimeout(function () {
+
+            purple.style.display = "block";
+
+        }, 500);
+
+
+        return;
+    }
+
+
+    /* ゲーム開始前・終了後 */
+
+    if (!gameStarted || gameOver) {
+        return;
+    }
+
 
 
     if (player === "left") {
@@ -252,7 +444,7 @@ purple.shootTarget = function(player) {
 
 
     // 5秒後に復活
-    setTimeout(function() {
+    setTimeout(function () {
 
         purple.style.display = "block";
 
@@ -269,32 +461,32 @@ addTarget(
     "red-targets",
     "ハム100.png",
     100,
-    490,
-    260
+    420,
+    280
 );
 
 addTarget(
     "red-targets",
     "ハム100.png",
     100,
-    620,
-    260
+    590,
+    280
 );
 
 addTarget(
     "red-targets",
     "ハム100.png",
     100,
-    750,
-    260
+    720,
+    280
 );
 
 addTarget(
     "red-targets",
     "ハム100.png",
     100,
-    880,
-    260
+    850,
+    280
 );
 
 
@@ -361,7 +553,7 @@ const waterRight = 990;
 
 function moveYellowTargets() {
 
-    yellowTargets.forEach(function(target) {
+    yellowTargets.forEach(function (target) {
 
         let currentX =
             parseFloat(target.style.left);
@@ -421,7 +613,7 @@ const greenTargets = [
         "アヒル100.png",
         100,
         380,
-        400
+        420
     ),
 
     addTarget(
@@ -429,7 +621,7 @@ const greenTargets = [
         "アヒル100.png",
         100,
         490,
-        400
+        420
     ),
 
     addTarget(
@@ -437,7 +629,7 @@ const greenTargets = [
         "アヒル100.png",
         100,
         600,
-        400
+        420
     ),
 
     addTarget(
@@ -445,7 +637,7 @@ const greenTargets = [
         "アヒル100.png",
         100,
         710,
-        400
+        420
     ),
 
     addTarget(
@@ -453,7 +645,7 @@ const greenTargets = [
         "アヒル100.png",
         100,
         820,
-        400
+        420
     ),
 
 ];
@@ -470,7 +662,7 @@ const greenSpeed = 0.6;
 
 function moveGreenTargets() {
 
-    greenTargets.forEach(function(target) {
+    greenTargets.forEach(function (target) {
 
         let currentX =
             parseFloat(target.style.left);
@@ -525,7 +717,7 @@ moveGreenTargets();
 
 addTarget(
     "orange-targets",
-    "アライグマ.png",
+    "reccoon.png",
     300,
     300,
     550
@@ -533,7 +725,7 @@ addTarget(
 
 addTarget(
     "orange-targets",
-    "アライグマ.png",
+    "reccoon.png",
     300,
     500,
     550
@@ -541,7 +733,7 @@ addTarget(
 
 addTarget(
     "orange-targets",
-    "アライグマ.png",
+    "reccoon.png",
     300,
     700,
     550
@@ -554,7 +746,7 @@ addTarget(
 
 window.addEventListener(
     "gamepadconnected",
-    function(event) {
+    function (event) {
 
         console.log(
             "Joy-Con接続:",
@@ -568,7 +760,7 @@ window.addEventListener(
 
 window.addEventListener(
     "gamepaddisconnected",
-    function(event) {
+    function (event) {
 
         console.log(
             "Joy-Con切断:",
@@ -582,8 +774,12 @@ window.addEventListener(
 /* =========================
    的に当たっているか
 ========================= */
-
 function shootAt(x, y, player) {
+
+    // 30秒経過後は撃てない
+    if (gameOver) {
+        return;
+    }
 
     const targets =
         document.querySelectorAll(
@@ -753,8 +949,8 @@ function updateGamepads() {
 
         leftFirePressed =
             fireButton ?
-            fireButton.pressed :
-            false;
+                fireButton.pressed :
+                false;
 
     }
 
@@ -826,8 +1022,8 @@ function updateGamepads() {
 
         rightFirePressed =
             fireButton ?
-            fireButton.pressed :
-            false;
+                fireButton.pressed :
+                false;
 
     }
 
@@ -847,3 +1043,207 @@ updateGamepads();
 ========================= */
 
 updateScores();
+
+/* =========================
+   スタートボタン
+========================= */
+
+const startButton =
+    document.getElementById("start-button");
+
+const startScreen =
+    document.getElementById("start-screen");
+
+const countdown =
+    document.getElementById("countdown");
+
+
+
+/* =========================
+   試し撃ち用の大きな的2つ
+========================= */
+
+const practiceTarget1 = addTarget(
+    "practice-targets",
+    "練習的.png",
+    0,
+    20,
+    250,
+    650
+);
+
+const practiceTarget2 = addTarget(
+    "practice-targets",
+    "練習的.png",
+    0,
+    430,
+    250,
+    650
+);
+
+
+/* 最初は隠す */
+
+practiceTarget1.style.display = "none";
+practiceTarget2.style.display = "none";
+
+
+/* =========================
+   STARTボタン
+========================= */
+
+startButton.addEventListener("click", function () {
+
+    /* STARTボタンだけ消す */
+
+    startButton.style.display = "none";
+
+
+    /* =========================
+       試し撃ち開始
+    ========================= */
+
+    practiceMode = true;
+    gameStarted = false;
+    gameOver = false;
+
+
+    /* 大きな的を表示 */
+
+    practiceTarget1.style.display = "block";
+    practiceTarget2.style.display = "block";
+
+
+    /* =========================
+       5秒後
+    ========================= */
+
+    setTimeout(function () {
+
+     /* =========================
+         試し撃ち終了
+     ========================= */
+
+    practiceMode = false;
+
+
+     /* =========================
+         練習の的を完全に消す
+     ========================= */
+
+    practiceTarget1.style.display = "none";
+    practiceTarget2.style.display = "none";
+
+
+     // 念のため親コンテナも一時的に隠す
+    practiceTarget1.parentElement.style.display = "none";
+
+
+    /* =========================
+      スタート背景を消す
+    ========================= */
+
+    startScreen.style.display = "none";
+
+
+    /* =========================
+       カウントダウン開始
+    ========================= */
+
+    countdown.style.display = "flex";
+
+    let count = 3;
+
+    countdown.textContent = count;
+    
+
+
+        /* 3 → 2 → 1 */
+
+        const countdownTimer =
+            setInterval(function () {
+
+                count--;
+
+                if (count > 0) {
+
+                    countdown.textContent =
+                        count;
+
+                } else {
+
+                    clearInterval(countdownTimer);
+
+
+                    /* カウントダウン終了 */
+
+                    countdown.style.display =
+                        "none";
+
+
+                    /* =========================
+                       幕を開ける
+                    ========================= */
+
+                    gameArea.classList.add(
+                        "curtain-open"
+                    );
+
+
+                    /* =========================
+                       本番開始
+                    ========================= */
+
+                    gameStarted = true;
+                    gameOver = false;
+
+
+                    /* 練習用コンテナを完全に消したままにする */
+
+                    practiceTarget1.parentElement.style.display = "none";
+
+
+
+                    /* =========================
+                       本番用の的を全部表示
+                    ========================= */
+
+                    document.querySelectorAll("#game img").forEach(function (target) {
+
+                        if (target.shootTarget) {
+                            target.style.display = "block";
+                        }
+
+                    });
+
+
+                    /* 30秒タイマー開始 */
+
+                    startGameTimer();
+
+                }
+
+            }, 1000);
+
+    }, 5000);
+
+});
+function showFinalScore() {
+
+    // すでに結果画面があれば作らない
+    if (document.getElementById("final-score")) {
+        return;
+    }
+
+    const finalScore = document.createElement("div");
+
+    finalScore.id = "final-score";
+
+    finalScore.innerHTML = `
+        <div class="final-title">RESULT</div>
+        <div class="final-left">LEFT　${leftScore} POINTS</div>
+        <div class="final-right">RIGHT　${rightScore} POINTS</div>
+    `;
+
+    gameArea.appendChild(finalScore);
+}
