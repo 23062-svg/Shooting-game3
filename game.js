@@ -1236,13 +1236,13 @@ function updateGamepads() {
         leftX =
             Math.max(
                 0,
-                Math.min(3456, leftX)
+                Math.min(2304, leftX)
             );
 
         leftY =
             Math.max(
                 0,
-                Math.min(2234, leftY)
+                Math.min(1489, leftY)
             );
 
 
@@ -1337,13 +1337,13 @@ function updateGamepads() {
         rightX =
             Math.max(
                 0,
-                Math.min(3456, rightX)
+                Math.min(2304, rightX)
             );
 
         rightY =
             Math.max(
                 0,
-                Math.min(2234, rightY)
+                Math.min(1489, rightY)
             );
 
 
@@ -1965,24 +1965,26 @@ function showFinalScore() {
 /* =========================================================
    画面いっぱいに表示
 ========================================================= */
-
 function resizeGame() {
     const game = document.getElementById("game");
 
     if (!game) return;
 
-    const GAME_WIDTH = 3456;
-    const GAME_HEIGHT = 2234;
+    const GAME_WIDTH = 2304;
+    const GAME_HEIGHT = 1489;
 
+    // 画面に収まる倍率を計算
     const scaleX = window.innerWidth / GAME_WIDTH;
     const scaleY = window.innerHeight / GAME_HEIGHT;
 
-    // 縦横比を維持して、画面に収まる最大サイズにする
+    // 縦横比を維持
     const scale = Math.min(scaleX, scaleY);
 
+    // ゲーム本体のサイズ
     game.style.width = GAME_WIDTH + "px";
     game.style.height = GAME_HEIGHT + "px";
 
+    // ゲーム全体を縮小
     game.style.transform = `scale(${scale})`;
 
     // 画面中央に配置
@@ -1996,6 +1998,7 @@ function resizeGame() {
 window.addEventListener("resize", resizeGame);
 
 resizeGame();
+
 
 /* =========================================================
    初期化
