@@ -1967,40 +1967,35 @@ function showFinalScore() {
 ========================================================= */
 
 function resizeGame() {
+    const game = document.getElementById("game");
 
-    const game =
-        document.getElementById("game");
+    if (!game) return;
 
-    if (!game) {
-        return;
-    }
+    const GAME_WIDTH = 3456;
+    const GAME_HEIGHT = 2234;
 
-    const scale =
-        Math.min(
-            window.innerWidth / 3456,
-            window.innerHeight / 2234
-        );
+    const scaleX = window.innerWidth / GAME_WIDTH;
+    const scaleY = window.innerHeight / GAME_HEIGHT;
 
-    game.style.transform =
-        `scale(${scale})`;
+    // 縦横比を維持して、画面に収まる最大サイズにする
+    const scale = Math.min(scaleX, scaleY);
 
+    game.style.width = GAME_WIDTH + "px";
+    game.style.height = GAME_HEIGHT + "px";
+
+    game.style.transform = `scale(${scale})`;
+
+    // 画面中央に配置
     game.style.left =
-        ((window.innerWidth - 3456 * scale) / 2) + "px";
+        ((window.innerWidth - GAME_WIDTH * scale) / 2) + "px";
 
     game.style.top =
-        ((window.innerHeight - 2234 * scale) / 2) + "px";
+        ((window.innerHeight - GAME_HEIGHT * scale) / 2) + "px";
 }
 
-
-
-
-window.addEventListener(
-    "resize",
-    resizeGame
-);
+window.addEventListener("resize", resizeGame);
 
 resizeGame();
-
 
 /* =========================================================
    初期化
