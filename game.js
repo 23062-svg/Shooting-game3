@@ -1236,13 +1236,13 @@ function updateGamepads() {
         leftX =
             Math.max(
                 0,
-                Math.min(2304, leftX)
+                Math.min(1440, leftX)
             );
 
         leftY =
             Math.max(
                 0,
-                Math.min(1489, leftY)
+                Math.min(931, leftY)
             );
 
 
@@ -1337,13 +1337,13 @@ function updateGamepads() {
         rightX =
             Math.max(
                 0,
-                Math.min(2304, rightX)
+                Math.min(1440, rightX)
             );
 
         rightY =
             Math.max(
                 0,
-                Math.min(1489, rightY)
+                Math.min(931, rightY)
             );
 
 
@@ -1970,8 +1970,8 @@ function resizeGame() {
 
     if (!game) return;
 
-    const GAME_WIDTH = 2304;
-    const GAME_HEIGHT = 1489;
+    const GAME_WIDTH = 1440;
+    const GAME_HEIGHT = 931;
 
     // 画面に収まる倍率を計算
     const scaleX = window.innerWidth / GAME_WIDTH;
