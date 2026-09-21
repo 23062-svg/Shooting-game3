@@ -114,7 +114,7 @@ function addTarget(
     points,
     x,
     y,
-    size = 120
+    size = 150
 ) {
 
     const container =
@@ -173,26 +173,22 @@ function addTarget(
 
 
         /* -------------------------
-           試し撃ち
-        ------------------------- */
+   練習モード
+------------------------- */
 
-        if (practiceMode) {
+if (practiceMode) {
 
-            target.style.display =
-                "none";
+    // 撃った場所にインクを付ける
+    createInk(
+        target,
+        window.currentShotX,
+        window.currentShotY,
+        player
+    );
 
-            setTimeout(function () {
-
-                if (practiceMode) {
-                    target.style.display =
-                        "block";
-                }
-
-            }, 500);
-
-            return;
-        }
-
+    // 的は消さない
+    return;
+}
 
         /* -------------------------
            ゲーム開始前・終了後
@@ -473,34 +469,230 @@ function shootAt(
                 return;
             }
 
+if (
+    !isVisiblePixel(
+        target,
+        x,
+        y
+    )
+) {
+    return;
+}
 
-            if (
-                !isVisiblePixel(
-                    target,
-                    x,
-                    y
-                )
-            ) {
-                return;
-            }
+
+/* 撃った場所を保存 */
+
+window.currentShotX = x;
+window.currentShotY = y;
 
 
-            if (
-                typeof target.shootTarget ===
-                "function"
-            ) {
+if (
+    typeof target.shootTarget ===
+    "function"
+) {
 
-                target.shootTarget(
-                    player
-                );
+    target.shootTarget(
+        player
+    );
 
-            }
+}
 
+        
         }
     );
 
 }
 
+
+/* =========================================================
+   練習モード・インクエフェクト
+========================================================= */
+
+function createInk(
+    target,
+    gameX,
+    gameY,
+    player
+) {
+
+    const container =
+        document.getElementById(
+            "practice-targets"
+        );
+
+    if (!container) {
+        return;
+    }
+
+
+    /* 的の位置を取得 */
+
+    const targetLeft =
+        parseFloat(target.style.left);
+
+    const targetTop =
+        parseFloat(target.style.top);
+
+
+    /* 的の中での位置 */
+
+    const inkX =
+        gameX - targetLeft;
+
+    const inkY =
+        gameY - targetTop;
+
+
+    /* インク */
+
+    const ink =
+        document.createElement("div");
+
+
+    ink.className =
+        "practice-ink";
+
+
+    /* 左＝ピンク */
+
+    if (player === "left") {
+
+        ink.style.background =
+            "#ff69b4";
+
+    }
+
+
+    /* 右＝水色 */
+
+    if (player === "right") {
+
+        ink.style.background =
+            "#55dfff";
+
+    }
+
+
+    /* インクの大きさ */
+
+    const size =
+        35 + Math.random() * 25;
+
+
+    ink.style.width =
+        size + "px";
+
+    ink.style.height =
+        size + "px";
+
+
+    /* 撃った位置 */
+
+    ink.style.left =
+        (targetLeft + inkX - size / 2) +
+        "px";
+
+    ink.style.top =
+        (targetTop + inkY - size / 2) +
+        "px";
+
+
+    /* 少しランダムに傾ける */
+
+    ink.style.transform =
+        `rotate(${Math.random() * 360}deg)`;
+
+
+    container.appendChild(
+        ink
+    );
+
+
+    /* 小さい飛び散りを追加 */
+
+    for (
+        let i = 0;
+        i < 6;
+        i++
+    ) {
+
+        const splat =
+            document.createElement("div");
+
+
+        splat.className =
+            "practice-ink-splat";
+
+
+        if (player === "left") {
+
+            splat.style.background =
+                "#ff69b4";
+
+        }
+        else {
+
+            splat.style.background =
+                "#55dfff";
+
+        }
+
+
+        const splatSize =
+            6 + Math.random() * 12;
+
+
+        const angle =
+            Math.random() *
+            Math.PI * 2;
+
+
+        const distance =
+            25 + Math.random() * 35;
+
+
+        const sx =
+            Math.cos(angle) *
+            distance;
+
+
+        const sy =
+            Math.sin(angle) *
+            distance;
+
+
+        splat.style.width =
+            splatSize + "px";
+
+        splat.style.height =
+            splatSize + "px";
+
+
+        splat.style.left =
+            (
+                targetLeft +
+                inkX +
+                sx -
+                splatSize / 2
+            ) + "px";
+
+
+        splat.style.top =
+            (
+                targetTop +
+                inkY +
+                sy -
+                splatSize / 2
+            ) + "px";
+
+
+        container.appendChild(
+            splat
+        );
+
+    }
+
+}
 
 /* =========================================================
    🔵 レックス 500点
@@ -510,32 +702,32 @@ const rex1 = addTarget(
     "blue-targets",
     "レックス500.png",
     500,
-    150,
-    210
+    230,
+    270
 );
 
 const rex2 = addTarget(
     "blue-targets",
     "レックス500.png",
     500,
-    270,
-    210
+    370,
+    270
 );
 
 const rex3 = addTarget(
     "blue-targets",
     "レックス500.png",
     500,
-    390,
-    210
+    510,
+    270
 );
 
 const rex4 = addTarget(
     "blue-targets",
     "レックス500.png",
     500,
-    510,
-    210
+    650,
+    270
 );
 
 
@@ -619,8 +811,9 @@ const purple =
         "purple-targets",
         "bullseye.png",
         400,
-        550,
-        200
+        890,
+        320,
+        240
     );
 
 
@@ -740,32 +933,32 @@ addTarget(
     "red-targets",
     "ハム100.png",
     100,
-    420,
-    280
+    750,
+    400
 );
 
 addTarget(
     "red-targets",
     "ハム100.png",
     100,
-    590,
-    280
+    920,
+    400
 );
 
 addTarget(
     "red-targets",
     "ハム100.png",
     100,
-    720,
-    280
+    1090,
+    400
 );
 
 addTarget(
     "red-targets",
     "ハム100.png",
     100,
-    850,
-    280
+    1260,
+    400
 );
 
 
@@ -779,32 +972,8 @@ const yellowTargets = [
         "yellow-targets",
         "アヒル100.png",
         100,
-        380,
-        370
-    ),
-
-    addTarget(
-        "yellow-targets",
-        "アヒル100.png",
-        100,
-        490,
-        370
-    ),
-
-    addTarget(
-        "yellow-targets",
-        "アヒル100.png",
-        100,
-        600,
-        370
-    ),
-
-    addTarget(
-        "yellow-targets",
-        "アヒル100.png",
-        100,
-        710,
-        370
+        700,
+        480
     ),
 
     addTarget(
@@ -812,7 +981,31 @@ const yellowTargets = [
         "アヒル100.png",
         100,
         820,
-        370
+        480
+    ),
+
+    addTarget(
+        "yellow-targets",
+        "アヒル100.png",
+        100,
+        940,
+        480
+    ),
+
+    addTarget(
+        "yellow-targets",
+        "アヒル100.png",
+        100,
+        1060,
+        480
+    ),
+
+    addTarget(
+        "yellow-targets",
+        "アヒル100.png",
+        100,
+        1180,
+        480
     )
 
 ].filter(Boolean);
@@ -822,8 +1015,8 @@ let yellowDirection = 1;
 
 const yellowSpeed = 0.4;
 
-const waterLeft = 290;
-const waterRight = 990;
+const waterLeft = 500;
+const waterRight = 1400;
 
 
 function moveYellowTargets() {
@@ -905,32 +1098,8 @@ const greenTargets = [
         "green-targets",
         "アヒル100.png",
         100,
-        380,
-        420
-    ),
-
-    addTarget(
-        "green-targets",
-        "アヒル100.png",
-        100,
-        490,
-        420
-    ),
-
-    addTarget(
-        "green-targets",
-        "アヒル100.png",
-        100,
-        600,
-        420
-    ),
-
-    addTarget(
-        "green-targets",
-        "アヒル100.png",
-        100,
-        710,
-        420
+        700,
+        550
     ),
 
     addTarget(
@@ -938,7 +1107,31 @@ const greenTargets = [
         "アヒル100.png",
         100,
         820,
-        420
+        550
+    ),
+
+    addTarget(
+        "green-targets",
+        "アヒル100.png",
+        100,
+        940,
+        550
+    ),
+
+    addTarget(
+        "green-targets",
+        "アヒル100.png",
+        100,
+        1060,
+        550
+    ),
+
+    addTarget(
+        "green-targets",
+        "アヒル100.png",
+        100,
+        1180,
+        550
     )
 
 ].filter(Boolean);
@@ -999,8 +1192,8 @@ function moveGreenTargets() {
 
 
     if (
-        leftEdge <= 290 ||
-        rightEdge >= 990
+        leftEdge <= waterLeft ||
+        rightEdge >= waterRight
     ) {
 
         greenDirection *= -1;
@@ -1026,27 +1219,27 @@ addTarget(
     "orange-targets",
     "reccoon.png",
     300,
-    390,
-    550,
-    170
+    450,
+    670,
+    350
 );
 
 addTarget(
     "orange-targets",
     "reccoon.png",
     300,
-    560,
-    550,
-    170
+    750,
+    670,
+    350
 );
 
 addTarget(
     "orange-targets",
     "reccoon.png",
     300,
-    730,
-    550,
-    170
+    1050,
+    670,
+    350
 );
 
 
@@ -1058,27 +1251,27 @@ addTarget(
     "bird-targets",
     "ことり.png",
     1000,
-    240,
+    340,
     160,
-    80
+    100
 );
 
 addTarget(
     "bird-targets",
     "ことり.png",
     1000,
-    290,
+    400,
     130,
-    80
+    100
 );
 
 addTarget(
     "bird-targets",
     "ことり.png",
     1000,
-    320,
+    460,
     160,
-    80
+    100
 );
 
 
@@ -1092,8 +1285,8 @@ const chicken =
         "ニワトリ.png",
         500,
         -150,
-        560,
-        160
+        700,
+        190
     );
 
 
@@ -1610,7 +1803,7 @@ const practiceTarget1 =
         0,
         -100,
         170,
-        720
+        1000
     );
 
 
@@ -1619,9 +1812,9 @@ const practiceTarget2 =
         "practice-targets",
         "練習的.png",
         0,
-        400,
+        550,
         170,
-        720
+        1000
     );
 
 

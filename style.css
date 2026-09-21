@@ -552,3 +552,38 @@ h1 {
         2px -2px 0px #000,
         -2px 2px 0px #000;
 }
+/* =========================================================
+   練習モード・インク
+========================================================= */
+
+.practice-ink {
+
+    position: absolute;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    z-index: 9999;
+
+    opacity: 0.85;
+
+    box-shadow:
+        0 0 8px rgba(255,255,255,0.25);
+
+}
+
+
+.practice-ink-splat {
+
+    position: absolute;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    z-index: 9999;
+
+    opacity: 0.8;
+
+}
