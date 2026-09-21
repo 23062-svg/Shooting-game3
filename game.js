@@ -450,11 +450,11 @@ function shootAt(
 ) {
 
     if (
-        !gameStarted ||
-        gameOver
-    ) {
-        return;
-    }
+    (!gameStarted && !practiceMode) ||
+    gameOver
+) {
+    return;
+}
 
 
     const targets =
@@ -1176,20 +1176,21 @@ window.addEventListener(
     }
 );
 
-
 /* =========================================================
    Joy-Con操作
 ========================================================= */
 
 function updateGamepads() {
 
-    const pads =
-        navigator.getGamepads();
-
+    const pads = navigator.getGamepads();
 
     let leftPad = null;
     let rightPad = null;
 
+
+    /* -----------------------------------------
+       接続されているJoy-Conを2台取得
+    ----------------------------------------- */
 
     for (const pad of pads) {
 
@@ -1197,17 +1198,11 @@ function updateGamepads() {
             continue;
         }
 
-
         if (!leftPad) {
-
             leftPad = pad;
-
         }
-
         else if (!rightPad) {
-
             rightPad = pad;
-
         }
 
     }
@@ -1215,48 +1210,43 @@ function updateGamepads() {
 
     /* =====================================================
        左Joy-Con
-       スティック axes 0,1
-       発射 button 13
     ===================================================== */
 
     if (leftPad) {
 
+        /* 左Joy-Conのスティック */
+
         const axisX =
-            leftPad.axes[0] || 0;
+            Math.abs(leftPad.axes[0]) > 0.15
+                ? leftPad.axes[0]
+                : 0;
 
         const axisY =
-            leftPad.axes[1] || 0;
+            Math.abs(leftPad.axes[1]) > 0.15
+                ? leftPad.axes[1]
+                : 0;
 
 
-        leftX +=
-            axisX *
-            cursorSpeed;
+        leftX += axisX * cursorSpeed;
+        leftY += axisY * cursorSpeed;
 
 
-        leftY +=
-            axisY *
-            cursorSpeed;
-
+        /* 画面外に出ないようにする */
 
         leftX =
             Math.max(
                 0,
-                Math.min(
-                    991,
-                    leftX
-                )
+                Math.min(3456, leftX)
             );
-
 
         leftY =
             Math.max(
                 0,
-                Math.min(
-                    711,
-                    leftY
-                )
+                Math.min(2234, leftY)
             );
 
+
+        /* 照準を移動 */
 
         leftCursor.style.left =
             leftX + "px";
@@ -1265,17 +1255,44 @@ function updateGamepads() {
             leftY + "px";
 
 
-        /* 発射ボタン */
+        /* -----------------------------------------
+           左Joy-Conのボタン
+           どのボタンでも発射
+        ----------------------------------------- */
 
-        const fireButton =
-            leftPad.buttons[6];
+        let leftPressed = false;
 
+        for (
+            let i = 0;
+            i < leftPad.buttons.length;
+            i++
+        ) {
+
+            if (
+                leftPad.buttons[i] &&
+                leftPad.buttons[i].pressed
+            ) {
+
+                leftPressed = true;
+                break;
+
+            }
+
+        }
+
+
+        /* 押した瞬間だけ発射 */
 
         if (
-            fireButton &&
-            fireButton.pressed &&
+            leftPressed &&
             !leftFirePressed
         ) {
+
+            console.log(
+                "LEFT FIRE",
+                leftX,
+                leftY
+            );
 
             shootAt(
                 leftX,
@@ -1287,57 +1304,50 @@ function updateGamepads() {
 
 
         leftFirePressed =
-            fireButton ?
-            fireButton.pressed :
-            false;
+            leftPressed;
 
     }
 
 
     /* =====================================================
        右Joy-Con
-       スティック axes 2,3
-       発射 button 3
     ===================================================== */
 
     if (rightPad) {
 
+        /* 右Joy-Conも axes 0,1 */
+
         const axisX =
-            rightPad.axes[2] || 0;
+            Math.abs(rightPad.axes[0]) > 0.15
+                ? rightPad.axes[0]
+                : 0;
 
         const axisY =
-            rightPad.axes[3] || 0;
+            Math.abs(rightPad.axes[1]) > 0.15
+                ? rightPad.axes[1]
+                : 0;
 
 
-        rightX +=
-            axisX *
-            cursorSpeed;
+        rightX += axisX * cursorSpeed;
+        rightY += axisY * cursorSpeed;
 
 
-        rightY +=
-            axisY *
-            cursorSpeed;
-
+        /* 画面外に出ないようにする */
 
         rightX =
             Math.max(
                 0,
-                Math.min(
-                    991,
-                    rightX
-                )
+                Math.min(3456, rightX)
             );
-
 
         rightY =
             Math.max(
                 0,
-                Math.min(
-                    711,
-                    rightY
-                )
+                Math.min(2234, rightY)
             );
 
+
+        /* 照準を移動 */
 
         rightCursor.style.left =
             rightX + "px";
@@ -1346,17 +1356,44 @@ function updateGamepads() {
             rightY + "px";
 
 
-        /* 発射ボタン */
+        /* -----------------------------------------
+           右Joy-Conのボタン
+           どのボタンでも発射
+        ----------------------------------------- */
 
-        const fireButton =
-            rightPad.buttons[7];
+        let rightPressed = false;
 
+        for (
+            let i = 0;
+            i < rightPad.buttons.length;
+            i++
+        ) {
+
+            if (
+                rightPad.buttons[i] &&
+                rightPad.buttons[i].pressed
+            ) {
+
+                rightPressed = true;
+                break;
+
+            }
+
+        }
+
+
+        /* 押した瞬間だけ発射 */
 
         if (
-            fireButton &&
-            fireButton.pressed &&
+            rightPressed &&
             !rightFirePressed
         ) {
+
+            console.log(
+                "RIGHT FIRE",
+                rightX,
+                rightY
+            );
 
             shootAt(
                 rightX,
@@ -1368,9 +1405,7 @@ function updateGamepads() {
 
 
         rightFirePressed =
-            fireButton ?
-            fireButton.pressed :
-            false;
+            rightPressed;
 
     }
 
@@ -1383,8 +1418,6 @@ function updateGamepads() {
 
 
 updateGamepads();
-
-
 /* =========================================================
    30秒タイマー
 ========================================================= */
@@ -1638,46 +1671,36 @@ if (startButton) {
             startButton.style.display =
                 "none";
 
+/* 状態 */
 
-            /* 状態 */
+practiceMode = true;
+gameStarted = false;
+gameOver = false;
 
-            practiceMode = true;
-            gameStarted = false;
-            gameOver = false;
+/* 練習画面全体を表示 */
 
+practiceTargets.style.display = "block";
 
-            /* 練習用の的を表示 */
+/* 練習用の的を表示 */
 
-            if (practiceTarget1) {
+if (practiceTarget1) {
 
-                practiceTarget1.style.display =
-                    "block";
+    practiceTarget1.style.display =
+        "block";
 
-            }
+}
 
+if (practiceTarget2) {
 
-            if (practiceTarget2) {
+    practiceTarget2.style.display =
+        "block";
 
-                practiceTarget2.style.display =
-                    "block";
+}
 
-            }
+/* 「的をねらって！」を表示 */
 
+practiceText.style.display = "block";
 
-            /* 「的をねらって！」 */
-
-            const practiceText =
-                document.getElementById(
-                    "practice-text"
-                );
-
-
-            if (practiceText) {
-
-                practiceText.style.display =
-                    "block";
-
-            }
 
 
             /* 10秒後 */
@@ -1946,30 +1969,29 @@ function showFinalScore() {
 function resizeGame() {
 
     const game =
-        document.getElementById(
-            "game"
-        );
-
+        document.getElementById("game");
 
     if (!game) {
         return;
     }
 
-
-    const scaleX =
-        window.innerWidth /
-        991;
-
-
-    const scaleY =
-        window.innerHeight /
-        711;
-
+    const scale =
+        Math.min(
+            window.innerWidth / 3456,
+            window.innerHeight / 2234
+        );
 
     game.style.transform =
-        `scaleX(${scaleX}) scaleY(${scaleY})`;
+        `scale(${scale})`;
 
+    game.style.left =
+        ((window.innerWidth - 3456 * scale) / 2) + "px";
+
+    game.style.top =
+        ((window.innerHeight - 2234 * scale) / 2) + "px";
 }
+
+
 
 
 window.addEventListener(

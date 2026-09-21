@@ -22,8 +22,8 @@ body {
     left: 0;
     top: 0;
 
-    width: 991px;
-    height: 711px;
+    width: 3456px;
+    height: 2234px;
 
     margin: 0;
     overflow: hidden;
@@ -54,8 +54,8 @@ h1 {
     position: absolute;
     left: 0;
     top: 0;
-    width: 991px;
-    height: 711px;
+    width: 3456px;
+    height: 2234px;
     pointer-events: none;
 }
 
@@ -161,8 +161,8 @@ h1 {
     left: 0;
     top: 0;
 
-    width: 991px;
-    height: 711px;
+    width: 3456px;
+    height: 2234px;
 
     background-image: url("start-background.jpeg");
     background-size: cover;
@@ -217,8 +217,8 @@ h1 {
     left: 0;
     top: 0;
 
-    width: 991px;
-    height: 711px;
+    width: 3456px;
+    height: 2234px;
 
     display: none;
 
@@ -250,7 +250,7 @@ h1 {
     position: absolute;
     left: 0;
 
-    width: 991px;
+    width: 3456px;
     height: 50%;
 
     background: #b22222;
@@ -344,8 +344,8 @@ h1 {
     position: absolute;
     left: 0;
     top: 0;
-    width: 991px;
-    height: 711px;
+    width: 3456px;
+    height: 2234px;
 
     z-index: 210;
 
@@ -379,8 +379,8 @@ h1 {
     position:absolute;
     left:0;
     top:0;
-    width:991px;
-    height:711px;
+    width:3456px;
+    height:2234px;
     z-index:300;
 
     display:flex;
@@ -448,8 +448,8 @@ h1 {
     left: 0;
     top: 0;
 
-    width: 991px;
-    height: 711px;
+    width: 3456px;
+    height: 2234px;
 
     display: none;
 
@@ -479,8 +479,8 @@ h1 {
     position: absolute;
     left: 0;
     top: 0;
-    width: 991px;
-    height: 711px;
+    width: 3456px;
+    height: 2234px;
 
     z-index: 290;
 
@@ -538,7 +538,7 @@ h1 {
     left: 0;
     top: 35px;
 
-    width: 991px;
+    width: 3456px;
 
     text-align: center;
 
