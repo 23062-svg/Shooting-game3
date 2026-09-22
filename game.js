@@ -1695,7 +1695,7 @@ setInterval(function () {
 
 }, 13000);
 
-  /* =========================
+/* =========================
    1ゲーム1回だけの5000点「がっき」
 ========================= */
 
@@ -1703,10 +1703,9 @@ let gakkiShown = false;
 let gakkiTimer = null;
 
 function startGakkiTarget() {
-    // 1ゲームにつき1回だけ
+
     gakkiShown = false;
 
-    // 前回のタイマーを消す
     if (gakkiTimer) {
         clearTimeout(gakkiTimer);
     }
@@ -1720,9 +1719,9 @@ function startGakkiTarget() {
 
         gakkiShown = true;
 
-        // ランダムな位置
-        const x = 100 + Math.random() * 750;
-        const y = 100 + Math.random() * 400;
+        // ★ 固定位置
+        const x = 500;
+        const y = 250;
 
         const gakki = addTarget(
             "gakki-targets",
@@ -1741,9 +1740,9 @@ function startGakkiTarget() {
         }, 2000);
 
     }, randomTime);
-}      
+}
 
-/* =========================================================
+ /* =========================================================
    Joy-Con接続
 ========================================================= */
 
