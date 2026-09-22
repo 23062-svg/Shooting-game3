@@ -1727,10 +1727,10 @@ function startGakkiTarget() {
         // 固定位置
         const gakki = addTarget(
             "gakki-targets",
-            "がっき.png",
+            "gakki.png",
             5000,
             700,
-            400,
+            200,
             170
         );
 
