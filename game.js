@@ -878,51 +878,179 @@ addTarget(
 
 /* =========================================================
    🟡 黄色のアヒル
+   1回目 → 100点・消える
+   復活後 → 300点
 ========================================================= */
 
+const duck1 = addTarget(
+    "yellow-targets",
+    "アヒル100.png",
+    100,
+    520,
+    350
+);
+
+const duck2 = addTarget(
+    "yellow-targets",
+    "アヒル100.png",
+    100,
+    600,
+    350
+);
+
+const duck3 = addTarget(
+    "yellow-targets",
+    "アヒル100.png",
+    100,
+    680,
+    350
+);
+
+const duck4 = addTarget(
+    "yellow-targets",
+    "アヒル100.png",
+    100,
+    760,
+    350
+);
+
+const duck5 = addTarget(
+    "yellow-targets",
+    "アヒル100.png",
+    100,
+    840,
+    350
+);
+
 const yellowTargets = [
-
-    addTarget(
-        "yellow-targets",
-        "アヒル100.png",
-        100,
-        520,
-        350
-    ),
-
-    addTarget(
-        "yellow-targets",
-        "アヒル100.png",
-        100,
-        600,
-        350
-    ),
-
-    addTarget(
-        "yellow-targets",
-        "アヒル100.png",
-        100,
-        680,
-        350
-    ),
-
-    addTarget(
-        "yellow-targets",
-        "アヒル100.png",
-        100,
-        760,
-        350
-    ),
-
-    addTarget(
-        "yellow-targets",
-        "アヒル100.png",
-        100,
-        840,
-        350
-    )
-
+    duck1,
+    duck2,
+    duck3,
+    duck4,
+    duck5
 ].filter(Boolean);
+
+
+/* =========================================================
+   アヒルの1回目・2回目処理
+========================================================= */
+
+yellowTargets.forEach(function (duck) {
+
+    duck.dataset.duckStage = "first";
+
+    duck.shootTarget = function (player) {
+
+        if (duck.style.display === "none") {
+            return;
+        }
+
+        /* 練習モード */
+        if (practiceMode) {
+
+            createInk(
+                duck,
+                window.currentShotX,
+                window.currentShotY,
+                player
+            );
+
+            return;
+        }
+
+        /* ゲーム開始前・終了後 */
+        if (!gameStarted || gameOver) {
+            return;
+        }
+
+
+        /* =========================
+           1回目
+        ========================= */
+
+        if (duck.dataset.duckStage === "first") {
+
+            /* 100点 */
+            if (player === "left") {
+                leftScore += 100;
+            }
+
+            if (player === "right") {
+                rightScore += 100;
+            }
+
+            updateScores();
+
+            /* 300点のアヒルに変更 */
+            duck.dataset.duckStage = "second";
+
+            /* 一旦消す */
+            duck.style.display = "none";
+
+            /* 1秒後に復活 */
+            setTimeout(function () {
+
+                if (gameStarted && !gameOver) {
+
+                    duck.style.display = "block";
+
+                }
+
+            }, 1000);
+
+            return;
+        }
+
+
+        /* =========================
+           2回目以降
+           → 300点
+        ========================= */
+
+        if (duck.dataset.duckStage === "second") {
+
+            if (player === "left") {
+                leftScore += 300;
+            }
+
+            if (player === "right") {
+                rightScore += 300;
+            }
+
+            updateScores();
+
+            /* 倒れる */
+            duck.classList.add("fall-back");
+
+            setTimeout(function () {
+
+                duck.style.display = "none";
+
+                duck.classList.remove("fall-back");
+
+            }, 600);
+
+            /* 5秒後に300点のまま復活 */
+            setTimeout(function () {
+
+                if (gameStarted && !gameOver) {
+
+                    duck.style.display = "block";
+
+                }
+
+            }, 5000);
+
+        }
+
+    };
+
+});
+
+
+/* =========================================================
+   アヒル移動
+========================================================= */
 
 let yellowDirection = 1;
 
@@ -933,54 +1061,74 @@ const waterRight = 1000;
 
 function moveYellowTargets() {
 
-    yellowTargets.forEach(
-        function (target) {
+    yellowTargets.forEach(function (target) {
 
-            let currentX =
-                parseFloat(
-                    target.style.left
-                );
-
-            currentX +=
-                yellowSpeed *
-                yellowDirection;
-
-            target.style.left =
-                currentX + "px";
-
+        if (
+            !target ||
+            target.style.display === "none"
+        ) {
+            return;
         }
-    );
 
-    if (
-        yellowTargets.length === 0
-    ) {
+        let currentX =
+            parseFloat(target.style.left);
+
+        currentX +=
+            yellowSpeed *
+            yellowDirection;
+
+        target.style.left =
+            currentX + "px";
+
+    });
+
+
+    if (yellowTargets.length === 0) {
         return;
     }
 
-    const leftEdge =
-        parseFloat(
-            yellowTargets[0].style.left
-        );
 
-    const lastTarget =
-        yellowTargets[
-            yellowTargets.length - 1
-        ];
+    const visibleTargets =
+        yellowTargets.filter(function (target) {
 
-    const rightEdge =
-        parseFloat(
-            lastTarget.style.left
-        ) +
-        lastTarget.offsetWidth;
+            return (
+                target &&
+                target.style.display !== "none"
+            );
 
-    if (
-        leftEdge <= waterLeft ||
-        rightEdge >= waterRight
-    ) {
+        });
 
-        yellowDirection *= -1;
+
+    if (visibleTargets.length > 0) {
+
+        const leftEdge =
+            parseFloat(
+                visibleTargets[0].style.left
+            );
+
+        const lastTarget =
+            visibleTargets[
+                visibleTargets.length - 1
+            ];
+
+        const rightEdge =
+            parseFloat(
+                lastTarget.style.left
+            ) +
+            lastTarget.offsetWidth;
+
+
+        if (
+            leftEdge <= waterLeft ||
+            rightEdge >= waterRight
+        ) {
+
+            yellowDirection *= -1;
+
+        }
 
     }
+
 
     requestAnimationFrame(
         moveYellowTargets
@@ -989,6 +1137,7 @@ function moveYellowTargets() {
 }
 
 moveYellowTargets();
+    
 
 /* =========================================================
    🟢 緑のアヒル
@@ -1140,16 +1289,7 @@ addTarget(
     "bird-targets",
     "ことり.png",
     1000,
-    370,
-    160,
-    100
-);
-
-addTarget(
-    "bird-targets",
-    "ことり.png",
-    1000,
-    430,
+    300,
     130,
     100
 );
@@ -1158,8 +1298,17 @@ addTarget(
     "bird-targets",
     "ことり.png",
     1000,
-    490,
-    160,
+    360,
+    100,
+    100
+);
+
+addTarget(
+    "bird-targets",
+    "ことり.png",
+    1000,
+    420,
+    130,
     100
 );
 
@@ -1226,19 +1375,19 @@ setInterval(
 
 const rabbit1 = addTarget(
     "rabbit-targets",
-    "うさぎ.png",
+    "rabbit.png",
     300,
     180,
-    250,
+    270,
     140
 );
 
 const rabbit2 = addTarget(
     "rabbit-targets",
-    "うさぎ.png",
+    "rabbit.png",
     300,
     300,
-    250,
+    270,
     140
 );
 
@@ -1283,8 +1432,8 @@ addTarget(
     "cat-targets",
     "ねこ.png",
     400,
-    780,
-    200,
+    790,
+    150,
     100
 );
 
@@ -1297,10 +1446,10 @@ addTarget(
 const goat =
     addTarget(
         "goat-targets",
-        "やぎ.png",
+        "goat.png",
         600,
-        120,
-        500,
+        100,
+        600,
         100
     );
 
@@ -1395,18 +1544,18 @@ const rexer3 = addTarget(
 
 const sparrow1 = addTarget(
     "sparrow-targets",
-    "スズメ.png",
+    "sparrow.png",
     500,
-    250,
+    200,
     80,
     120
 );
 
 const sparrow2 = addTarget(
     "sparrow-targets",
-    "スズメ.png",
+    "sparrow.png",
     500,
-    500,
+    300,
     130,
     120
 );
