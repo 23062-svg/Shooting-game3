@@ -284,7 +284,7 @@ if (practiceMode) {
                 return;
             }
 
-            shootTarget("left");
+            target.shootTarget("left");
 
         }
     );
@@ -876,16 +876,20 @@ addTarget(
     300
 );
 
+
 /* =========================================================
    🟡 黄色のアヒル
-   1回目 → 100点・消える
-   復活後 → 300点
+   1回目に当てる → 300点
+   ↓
+   消える
+   ↓
+   300点のアヒルとして復活
 ========================================================= */
 
 const duck1 = addTarget(
     "yellow-targets",
     "アヒル100.png",
-    100,
+    300,
     520,
     350
 );
@@ -893,7 +897,7 @@ const duck1 = addTarget(
 const duck2 = addTarget(
     "yellow-targets",
     "アヒル100.png",
-    100,
+    300,
     600,
     350
 );
@@ -901,7 +905,7 @@ const duck2 = addTarget(
 const duck3 = addTarget(
     "yellow-targets",
     "アヒル100.png",
-    100,
+    300,
     680,
     350
 );
@@ -909,7 +913,7 @@ const duck3 = addTarget(
 const duck4 = addTarget(
     "yellow-targets",
     "アヒル100.png",
-    100,
+    300,
     760,
     350
 );
@@ -917,7 +921,7 @@ const duck4 = addTarget(
 const duck5 = addTarget(
     "yellow-targets",
     "アヒル100.png",
-    100,
+    300,
     840,
     350
 );
@@ -932,7 +936,7 @@ const yellowTargets = [
 
 
 /* =========================================================
-   アヒルの1回目・2回目処理
+   アヒル専用処理
 ========================================================= */
 
 yellowTargets.forEach(function (duck) {
@@ -958,33 +962,34 @@ yellowTargets.forEach(function (duck) {
             return;
         }
 
-        /* ゲーム開始前・終了後 */
+        /* 本番前・ゲーム終了後 */
         if (!gameStarted || gameOver) {
             return;
         }
 
 
-        /* =========================
+        /* =====================================
            1回目
-        ========================= */
+           → 300点
+           → 消える
+        ===================================== */
 
         if (duck.dataset.duckStage === "first") {
 
-            /* 100点 */
             if (player === "left") {
-                leftScore += 100;
+                leftScore += 300;
             }
 
             if (player === "right") {
-                rightScore += 100;
+                rightScore += 300;
             }
 
             updateScores();
 
-            /* 300点のアヒルに変更 */
+            /* 300点状態にする */
             duck.dataset.duckStage = "second";
 
-            /* 一旦消す */
+            /* 消す */
             duck.style.display = "none";
 
             /* 1秒後に復活 */
@@ -1002,10 +1007,12 @@ yellowTargets.forEach(function (duck) {
         }
 
 
-        /* =========================
+        /* =====================================
            2回目以降
            → 300点
-        ========================= */
+           → 消える
+           → 5秒後復活
+        ===================================== */
 
         if (duck.dataset.duckStage === "second") {
 
@@ -1082,11 +1089,9 @@ function moveYellowTargets() {
 
     });
 
-
     if (yellowTargets.length === 0) {
         return;
     }
-
 
     const visibleTargets =
         yellowTargets.filter(function (target) {
@@ -1097,7 +1102,6 @@ function moveYellowTargets() {
             );
 
         });
-
 
     if (visibleTargets.length > 0) {
 
@@ -1117,7 +1121,6 @@ function moveYellowTargets() {
             ) +
             lastTarget.offsetWidth;
 
-
         if (
             leftEdge <= waterLeft ||
             rightEdge >= waterRight
@@ -1129,15 +1132,13 @@ function moveYellowTargets() {
 
     }
 
-
     requestAnimationFrame(
         moveYellowTargets
     );
 
 }
 
-moveYellowTargets();
-    
+moveYellowTargets(); 
 
 /* =========================================================
    🟢 緑のアヒル
