@@ -1720,8 +1720,8 @@ function startGakkiTarget() {
         gakkiShown = true;
 
         // ★ 固定位置
-        const x = 500;
-        const y = 250;
+        const x = 600;
+        const y = 700;
 
         const gakki = addTarget(
             "gakki-targets",
