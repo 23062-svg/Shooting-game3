@@ -1021,7 +1021,7 @@ let yellowDirection = 1;
 const yellowSpeed = 0.4;
 
 const waterLeft = 500;
-const waterRight = 1400;
+const waterRight = 1430;
 
 
 function moveYellowTargets() {
