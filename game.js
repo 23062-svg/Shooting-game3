@@ -1504,9 +1504,9 @@ const rexer3 = addTarget(
     250,
     130
 );
-
+    
 /* =========================
-   スズメ ×2
+   🐦 スズメ ×2
    ニワトリと同じ動き
 ========================= */
 
@@ -1523,36 +1523,93 @@ const sparrow2 = addTarget(
     "sparrow-targets",
     "sparrow.png",
     500,
-    300,
+    130,
     130,
     120
 );
 
-const sparrowTargets = [sparrow1, sparrow2].filter(Boolean);
+const sparrowTargets = [
+    sparrow1,
+    sparrow2
+].filter(Boolean);
 
-/* ニワトリと同じ動き */
-let sparrowStartX = -150;
-let sparrowEndX = 991;
-let sparrowDuration = 7000;
 
-sparrowTargets.forEach(function (sparrow, index) {
+/* =========================================================
+   スズメをニワトリと同じように飛ばす
+========================================================= */
 
-    if (!sparrow) return;
+function moveSparrows() {
 
-    sparrow.style.left = sparrowStartX + "px";
+    sparrowTargets.forEach(
+        function (sparrow) {
 
-    setTimeout(function () {
+            if (!sparrow) {
+                return;
+            }
 
-        sparrow.style.transition =
-            "left " + sparrowDuration + "ms linear";
+            /* 左端に戻す */
 
-        sparrow.style.left =
-            sparrowEndX + "px";
+            sparrow.style.transition =
+                "none";
 
-    }, index * 500);
+            sparrow.style.left =
+                "-150px";
 
-});
+        }
+    );
 
+
+    /* 少し待ってから右へ飛ぶ */
+
+    setTimeout(
+        function () {
+
+            if (!gameOver) {
+
+                sparrowTargets.forEach(
+                    function (sparrow) {
+
+                        if (!sparrow) {
+                            return;
+                        }
+
+                        sparrow.style.transition =
+                            "left 7s linear";
+
+                        sparrow.style.left =
+                            "991px";
+
+                    }
+                );
+
+            }
+
+        },
+        50
+    );
+
+}
+
+
+/* 最初の飛行 */
+
+moveSparrows();
+
+
+/* 7秒ごとに繰り返す */
+
+setInterval(
+    function () {
+
+        if (!gameOver) {
+
+            moveSparrows();
+
+        }
+
+    },
+    7000
+);
 
 /* =========================================================
    Joy-Con接続
