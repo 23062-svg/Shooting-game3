@@ -1,104 +1,105 @@
-/* =========================================================
-   🎯 2人プレイ・シューティングゲーム
-   マウス + Joy-Con
-   ゲーム画面：1024 × 661
-========================================================= */
-
+const hitSound = new Audio("pon.mp3");
 
 /* =========================================================
-   基本設定
+   2人プレイ・シューティングゲーム
+   マウス + Joy-Con 2台
 ========================================================= */
+const practiceTargets = document.getElementById("practice-targets");
+const practiceText = document.getElementById("practice-text");
 
-const GAME_WIDTH = 1024;
-const GAME_HEIGHT = 661;
+// 最初は練習画面を完全に隠す
+practiceTargets.style.display = "none";
+practiceText.style.display = "none";
 
-let leftScore = 0;
-let rightScore = 0;
-
-let gameStarted = false;
-let gameOver = false;
-
-let practiceMode = false;
+/* =========================================================
+   ゲーム状態
+========================================================= */
 
 let timeLeft = 30;
-
-let leftPad = null;
-let rightPad = null;
-
+let gameOver = false;
+let gameStarted = false;
+let practiceMode = false;
+let gameTimer = null;
 
 /* =========================================================
    HTML要素
 ========================================================= */
 
-const game =
-    document.getElementById("game");
+const gameArea = document.getElementById("game");
 
-const startScreen =
-    document.getElementById("start-screen");
+let scoreText = document.getElementById("score");
+let timerText = document.getElementById("timer");
 
-const startButton =
-    document.getElementById("start-button");
+/* score / timer がHTMLに無くても自動作成 */
+if (!scoreText) {
+    scoreText = document.createElement("div");
+    scoreText.id = "score";
+    scoreText.textContent = "LEFT: 0     RIGHT: 0";
+    document.body.insertBefore(scoreText, gameArea);
+}
 
-const timerText =
-    document.getElementById("timer");
-
-const leftScoreText =
-    document.getElementById("left-score");
-
-const rightScoreText =
-    document.getElementById("right-score");
-
-const practiceTargets =
-    document.getElementById("practice-targets");
-
-const practiceText =
-    document.getElementById("practice-text");
-
-const crosshair =
-    document.getElementById("crosshair");
-
+if (!timerText) {
+    timerText = document.createElement("div");
+    timerText.id = "timer";
+    timerText.textContent = "Time: 30";
+    document.body.insertBefore(timerText, gameArea);
+}
 
 /* =========================================================
-   効果音
+   得点
 ========================================================= */
 
-const hitSound =
-    new Audio("pon.mp3");
-
-
-/* =========================================================
-   スコア表示
-========================================================= */
+let leftScore = 0;
+let rightScore = 0;
 
 function updateScores() {
 
-    if (leftScoreText) {
-        leftScoreText.textContent =
-            "LEFT: " + leftScore;
-    }
+    scoreText.textContent =
+        "LEFT: " + leftScore +
+        "     RIGHT: " + rightScore;
 
-    if (rightScoreText) {
-        rightScoreText.textContent =
-            "RIGHT: " + rightScore;
-    }
 }
 
-
 /* =========================================================
-   タイマー表示
+   Joy-Con照準
 ========================================================= */
 
-function updateTimer() {
+const leftCursor = document.createElement("div");
+const rightCursor = document.createElement("div");
 
-    if (timerText) {
-        timerText.textContent =
-            "Time: " + timeLeft;
-    }
-}
+leftCursor.className =
+    "player-cursor left-cursor";
 
+rightCursor.className =
+    "player-cursor right-cursor";
+
+leftCursor.textContent = "🩷";
+rightCursor.textContent = "🩵";
+
+gameArea.appendChild(leftCursor);
+gameArea.appendChild(rightCursor);
 
 /* =========================================================
-   ターゲット作成
+   照準位置
+========================================================= */
+
+let leftX = 300;
+let leftY = 300;
+
+let rightX = 700;
+let rightY = 300;
+
+const cursorSpeed = 5;
+
+/* =========================================================
+   発射ボタン
+========================================================= */
+
+let leftFirePressed = false;
+let rightFirePressed = false;
+
+/* =========================================================
+   的を作る共通関数
 ========================================================= */
 
 function addTarget(
@@ -114,8 +115,8 @@ function addTarget(
         document.getElementById(containerId);
 
     if (!container) {
-        console.warn(
-            "コンテナがありません:",
+        console.error(
+            "的の入れ物がありません:",
             containerId
         );
         return null;
@@ -126,23 +127,12 @@ function addTarget(
 
     target.src = imageFile;
 
-    target.className =
-        "shooting-target";
-
-    target.dataset.points =
-        points;
-
-    target.dataset.image =
-        imageFile;
+    target.classList.add(
+        "shooting-target"
+    );
 
     target.style.position =
         "absolute";
-
-    target.style.width =
-        size + "px";
-
-    target.style.height =
-        "auto";
 
     target.style.left =
         x + "px";
@@ -150,16 +140,116 @@ function addTarget(
     target.style.top =
         y + "px";
 
+    target.style.width =
+        size + "px";
+
+    target.style.height =
+        "auto";
+
     target.style.cursor =
         "crosshair";
 
-    target.draggable =
-        false;
+    /* =====================================================
+       的を撃つ
+    ===================================================== */
 
+    function shootTarget(player) {
 
-    /* -----------------------------------------------------
-       クリック
-    ----------------------------------------------------- */
+        if (
+            target.style.display ===
+            "none"
+        ) {
+            return;
+        }
+
+    hitSound.currentTime = 0;
+    hitSound.play();
+
+ /* -------------------------
+   練習モード
+------------------------- */
+
+if (practiceMode) {
+
+    // 撃った場所にインクを付ける
+    createInk(
+        target,
+        window.currentShotX,
+        window.currentShotY,
+        player
+    );
+
+    // 的は消さない
+    return;
+}
+
+        /* -------------------------
+           ゲーム開始前・終了後
+        ------------------------- */
+
+        if (
+            !gameStarted ||
+            gameOver
+        ) {
+            return;
+        }
+
+        /* -------------------------
+           得点
+        ------------------------- */
+
+        if (player === "left") {
+            leftScore += points;
+        }
+
+        if (player === "right") {
+            rightScore += points;
+        }
+
+        updateScores();
+
+        /* -------------------------
+           的が倒れる
+        ------------------------- */
+
+        target.classList.add(
+            "fall-back"
+        );
+
+        setTimeout(function () {
+
+            target.style.display =
+                "none";
+
+            target.classList.remove(
+                "fall-back"
+            );
+
+        }, 600);
+
+        /* -------------------------
+           5秒後に復活
+        ------------------------- */
+
+        setTimeout(function () {
+
+            if (
+                gameStarted &&
+                !gameOver
+            ) {
+
+                target.style.display =
+                    "block";
+
+            }
+
+        }, 5000);
+
+    }
+
+    /* =====================================================
+       マウスクリック
+    ===================================================== */
 
     target.addEventListener(
         "click",
@@ -167,123 +257,152 @@ function addTarget(
 
             event.stopPropagation();
 
-            const rect =
-                game.getBoundingClientRect();
+            if (gameOver) {
+                return;
+            }
 
-            const shotX =
-                (event.clientX - rect.left)
-                * GAME_WIDTH
-                / rect.width;
+            const gameRect =
+                gameArea.getBoundingClientRect();
 
-            const shotY =
-                (event.clientY - rect.top)
-                * GAME_HEIGHT
-                / rect.height;
+            const clickX =
+                event.clientX -
+                gameRect.left;
 
-            shootAt(
-                shotX,
-                shotY,
-                "left"
-            );
+            const clickY =
+                event.clientY -
+                gameRect.top;
+
+            /* 透明部分ならハズレ */
+
+            if (
+                !isVisiblePixel(
+                    target,
+                    clickX,
+                    clickY
+                )
+            ) {
+                return;
+            }
+
+            shootTarget("left");
+
         }
     );
 
+    /* Joy-Conから使うため保存 */
 
-    container.appendChild(target);
+    target.shootTarget =
+        shootTarget;
+
+    container.appendChild(
+        target
+    );
 
     return target;
 }
 
-
 /* =========================================================
-   的を撃つ
+   画像の透明部分を判定
 ========================================================= */
 
-function shootTarget(
+function isVisiblePixel(
     target,
-    player
+    gameX,
+    gameY
 ) {
 
-    if (!target) {
-        return;
+    const gameRect =
+        gameArea.getBoundingClientRect();
+
+    const targetRect =
+        target.getBoundingClientRect();
+
+    const screenX =
+        gameRect.left + gameX;
+
+    const screenY =
+        gameRect.top + gameY;
+
+    if (
+        screenX < targetRect.left ||
+        screenX > targetRect.right ||
+        screenY < targetRect.top ||
+        screenY > targetRect.bottom
+    ) {
+
+        return false;
+
     }
 
-    if (!gameStarted || gameOver) {
-        return;
+    if (
+        !target.complete ||
+        target.naturalWidth === 0 ||
+        target.naturalHeight === 0
+    ) {
+
+        return false;
+
     }
 
-    if (target.style.display === "none") {
-        return;
-    }
-
-
-    /* -----------------------------------------------------
-       練習モード
-       的は消さずにインクだけ表示
-    ----------------------------------------------------- */
-
-    if (practiceMode) {
-
-        createInk(
-            window.currentShotX,
-            window.currentShotY,
-            player
+    const imageX =
+        Math.floor(
+            (screenX - targetRect.left) *
+            target.naturalWidth /
+            targetRect.width
         );
 
-        playHitSound();
+    const imageY =
+        Math.floor(
+            (screenY - targetRect.top) *
+            target.naturalHeight /
+            targetRect.height
+        );
 
-        return;
+    const canvas =
+        document.createElement("canvas");
+
+    canvas.width =
+        target.naturalWidth;
+
+    canvas.height =
+        target.naturalHeight;
+
+    const ctx =
+        canvas.getContext("2d");
+
+    try {
+
+        ctx.drawImage(
+            target,
+            0,
+            0
+        );
+
+        const pixel =
+            ctx.getImageData(
+                imageX,
+                imageY,
+                1,
+                1
+            ).data;
+
+        return pixel[3] >= 50;
+
+    } catch (error) {
+
+        console.log(
+            "透明部分判定エラー",
+            error
+        );
+
+        return true;
+
     }
 
-
-    /* -----------------------------------------------------
-       通常ゲーム
-    ----------------------------------------------------- */
-
-    const points =
-        Number(target.dataset.points || 0);
-
-
-    if (player === "left") {
-
-        leftScore += points;
-
-    } else {
-
-        rightScore += points;
-    }
-
-
-    updateScores();
-
-    playHitSound();
-
-
-    /* 的を一度消す */
-
-    target.style.display =
-        "none";
-
-
-    /* 少し待って再表示 */
-
-    setTimeout(
-        function () {
-
-            if (!gameOver) {
-
-                target.style.display =
-                    "block";
-            }
-
-        },
-        700
-    );
 }
 
-
 /* =========================================================
-   命中処理
+   Joy-Con / 照準が的に当たったか
 ========================================================= */
 
 function shootAt(
@@ -292,132 +411,97 @@ function shootAt(
     player
 ) {
 
-    if (!gameStarted || gameOver) {
-        return;
-    }
-
-    window.currentShotX = x;
-    window.currentShotY = y;
-
+    if (
+    (!gameStarted && !practiceMode) ||
+    gameOver
+) {
+    return;
+}
 
     const targets =
         document.querySelectorAll(
             ".shooting-target"
         );
 
+    targets.forEach(
+        function (target) {
 
-    /* 上にある的から判定する */
+            if (
+                target.style.display ===
+                "none"
+            ) {
+                return;
+            }
 
-    const sortedTargets =
-        Array.from(targets)
-        .reverse();
-
-
-    for (
-        const target of sortedTargets
-    ) {
-
-        if (
-            target.style.display ===
-            "none"
-        ) {
-            continue;
-        }
-
-
-        const rect =
-            target.getBoundingClientRect();
-
-        const gameRect =
-            game.getBoundingClientRect();
-
-
-        const targetX =
-            (rect.left - gameRect.left)
-            * GAME_WIDTH
-            / gameRect.width;
-
-        const targetY =
-            (rect.top - gameRect.top)
-            * GAME_HEIGHT
-            / gameRect.height;
-
-
-        const targetWidth =
-            rect.width
-            * GAME_WIDTH
-            / gameRect.width;
-
-        const targetHeight =
-            rect.height
-            * GAME_HEIGHT
-            / gameRect.height;
-
-
-        if (
-            x >= targetX &&
-            x <= targetX + targetWidth &&
-            y >= targetY &&
-            y <= targetY + targetHeight
-        ) {
-
-            shootTarget(
-                target,
-                player
-            );
-
-            return;
-        }
-    }
+if (
+    !isVisiblePixel(
+        target,
+        x,
+        y
+    )
+) {
+    return;
 }
 
+/* 撃った場所を保存 */
 
-/* =========================================================
-   効果音
-========================================================= */
+window.currentShotX = x;
+window.currentShotY = y;
 
-function playHitSound() {
+if (
+    typeof target.shootTarget ===
+    "function"
+) {
 
-    try {
+    target.shootTarget(
+        player
+    );
 
-        hitSound.currentTime = 0;
-
-        const result =
-            hitSound.play();
-
-        if (
-            result &&
-            result.catch
-        ) {
-            result.catch(
-                () => {}
-            );
-        }
-
-    } catch (error) {
-
-        console.log(
-            "効果音エラー",
-            error
-        );
-    }
 }
 
+        
+        }
+    );
+
+}
 
 /* =========================================================
-   練習モードのインク
+   練習モード・インクエフェクト
 ========================================================= */
 
 function createInk(
-    x,
-    y,
+    target,
+    gameX,
+    gameY,
     player
 ) {
 
-    if (!practiceTargets) {
+    const container =
+        document.getElementById(
+            "practice-targets"
+        );
+
+    if (!container) {
         return;
     }
 
+    /* 的の位置を取得 */
+
+    const targetLeft =
+        parseFloat(target.style.left);
+
+    const targetTop =
+        parseFloat(target.style.top);
+
+    /* 的の中での位置 */
+
+    const inkX =
+        gameX - targetLeft;
+
+    const inkY =
+        gameY - targetTop;
+
+    /* インク */
 
     const ink =
         document.createElement("div");
@@ -425,182 +509,339 @@ function createInk(
     ink.className =
         "practice-ink";
 
-
-    ink.style.position =
-        "absolute";
-
-    ink.style.left =
-        x + "px";
-
-    ink.style.top =
-        y + "px";
-
+    /* 左＝ピンク */
 
     if (player === "left") {
 
         ink.style.background =
-            "#ff77b7";
+            "#ff69b4";
 
-    } else {
-
-        ink.style.background =
-            "#7ddcff";
     }
 
+    /* 右＝水色 */
+
+    if (player === "right") {
+
+        ink.style.background =
+            "#55dfff";
+
+    }
+
+    /* インクの大きさ */
+
+    const size =
+        35 + Math.random() * 25;
 
     ink.style.width =
-        "70px";
+        size + "px";
 
     ink.style.height =
-        "70px";
+        size + "px";
 
-    ink.style.borderRadius =
-        "50%";
+    /* 撃った位置 */
+
+    ink.style.left =
+        (targetLeft + inkX - size / 2) +
+        "px";
+
+    ink.style.top =
+        (targetTop + inkY - size / 2) +
+        "px";
+
+    /* 少しランダムに傾ける */
 
     ink.style.transform =
-        "translate(-50%, -50%)";
+        `rotate(${Math.random() * 360}deg)`;
 
-    ink.style.pointerEvents =
-        "none";
-
-    ink.style.zIndex =
-        "999";
-
-
-    practiceTargets.appendChild(
+    container.appendChild(
         ink
     );
-}
 
+    /* 小さい飛び散りを追加 */
 
-/* =========================================================
-   🦖 レックス
-   500点
-========================================================= */
+    for (
+        let i = 0;
+        i < 6;
+        i++
+    ) {
 
-const rexTargets =
-    [];
+        const splat =
+            document.createElement("div");
 
-for (
-    let i = 0;
-    i < 4;
-    i++
-) {
+        splat.className =
+            "practice-ink-splat";
 
-    const rex =
-        addTarget(
-            "blue-targets",
-            "レックス500.png",
-            500,
-            230 + i * 140,
-            200,
-            120
+        if (player === "left") {
+
+            splat.style.background =
+                "#ff69b4";
+
+        }
+        else {
+
+            splat.style.background =
+                "#55dfff";
+
+        }
+
+        const splatSize =
+            6 + Math.random() * 12;
+
+        const angle =
+            Math.random() *
+            Math.PI * 2;
+
+        const distance =
+            25 + Math.random() * 35;
+
+        const sx =
+            Math.cos(angle) *
+            distance;
+
+        const sy =
+            Math.sin(angle) *
+            distance;
+
+        splat.style.width =
+            splatSize + "px";
+
+        splat.style.height =
+            splatSize + "px";
+
+        splat.style.left =
+            (
+                targetLeft +
+                inkX +
+                sx -
+                splatSize / 2
+            ) + "px";
+
+        splat.style.top =
+            (
+                targetTop +
+                inkY +
+                sy -
+                splatSize / 2
+            ) + "px";
+
+        container.appendChild(
+            splat
         );
 
-    rexTargets.push(rex);
+    }
+
 }
 
+/* =========================================================
+   🔵 レックス 500点
+========================================================= */
 
-let rexStep = 0;
+const rex1 = addTarget(
+    "blue-targets",
+    "レックス500.png",
+    500,
+    230,
+    200
+);
 
+const rex2 = addTarget(
+    "blue-targets",
+    "レックス500.png",
+    500,
+    370,
+    200
+);
+
+const rex3 = addTarget(
+    "blue-targets",
+    "レックス500.png",
+    500,
+    510,
+    200
+);
+
+const rex4 = addTarget(
+    "blue-targets",
+    "レックス500.png",
+    500,
+    650,
+    200
+);
+
+const rexTargets = [
+    rex1,
+    rex2,
+    rex3,
+    rex4
+].filter(Boolean);
+
+let rexDirection = 1;
+let rexSteps = 0;
+
+/* =========================================================
+   レックス移動
+========================================================= */
 
 setInterval(
     function () {
 
-        if (
-            !gameStarted ||
-            gameOver
-        ) {
-            return;
-        }
-
-
-        rexStep++;
-
-        if (
-            rexStep >= 4
-        ) {
-            rexStep = 0;
-        }
-
-
         rexTargets.forEach(
-            function (rex, index) {
+            function (rex) {
 
-                if (!rex) {
-                    return;
-                }
-
-
-                const x =
-                    230
-                    + index * 140
-                    + (rexStep % 2) * 10;
+                const currentX =
+                    parseFloat(
+                        rex.style.left
+                    );
 
                 rex.style.transition =
-                    "left 0.6s ease";
+                    "left 2s ease-in-out";
 
                 rex.style.left =
-                    x + "px";
-
+                    (
+                        currentX +
+                        10 *
+                        rexDirection
+                    ) + "px";
 
                 rex.classList.remove(
-                    "rabbit-jump"
+                    "rex-jump"
                 );
 
                 void rex.offsetWidth;
 
                 rex.classList.add(
-                    "rabbit-jump"
+                    "rex-jump"
                 );
+
             }
         );
+
+        rexSteps++;
+
+        if (rexSteps >= 3) {
+
+            rexDirection *= -1;
+            rexSteps = 0;
+
+        }
 
     },
     2000
 );
 
-
 /* =========================================================
-   🟣 ブルズアイ
-   400点
+   🟣 ブルズアイ 400点
 ========================================================= */
 
-const bullseye =
+const purple =
     addTarget(
         "purple-targets",
-        "ブルズアイ.png",
+        "bullseye.png",
         400,
         650,
         200,
         150
     );
 
+if (purple) {
 
-if (bullseye) {
-
-    bullseye.style.display =
+    purple.style.display =
         "none";
 
+    purple.shootTarget =
+        function (player) {
+
+            if (
+                purple.style.display ===
+                "none"
+            ) {
+                return;
+            }
+
+            if (practiceMode) {
+
+                purple.style.display =
+                    "none";
+
+                setTimeout(
+                    function () {
+
+                        if (practiceMode) {
+
+                            purple.style.display =
+                                "block";
+
+                        }
+
+                    },
+                    500
+                );
+
+                return;
+            }
+
+            if (
+                !gameStarted ||
+                gameOver
+            ) {
+                return;
+            }
+
+            if (player === "left") {
+                leftScore += 400;
+            }
+
+            if (player === "right") {
+                rightScore += 400;
+            }
+
+            updateScores();
+
+            purple.style.display =
+                "none";
+
+            setTimeout(
+                function () {
+
+                    if (
+                        gameStarted &&
+                        !gameOver
+                    ) {
+
+                        purple.style.display =
+                            "block";
+
+                    }
+
+                },
+                5000
+            );
+
+        };
+
+    /* 5秒後に登場 */
 
     setTimeout(
         function () {
 
-            if (!gameOver) {
+            if (
+                gameStarted &&
+                !gameOver
+            ) {
 
-                bullseye.style.display =
+                purple.style.display =
                     "block";
+
             }
 
         },
         5000
     );
+
 }
 
-
 /* =========================================================
-   🐷 ハム
-   100点
+   🔴 ハム 100点
 ========================================================= */
 
 addTarget(
@@ -608,8 +849,7 @@ addTarget(
     "ハム100.png",
     100,
     550,
-    300,
-    120
+    300
 );
 
 addTarget(
@@ -617,219 +857,257 @@ addTarget(
     "ハム100.png",
     100,
     660,
-    300,
-    120
+    300
 );
 
 addTarget(
     "red-targets",
     "ハム100.png",
     100,
-    770,
-    300,
-    120
+    780,
+    300
 );
 
 addTarget(
     "red-targets",
     "ハム100.png",
     100,
-    880,
-    300,
-    120
+    900,
+    300
 );
-
 
 /* =========================================================
-   🦆 黄色いアヒル
-   100点
+   🟡 黄色のアヒル
 ========================================================= */
 
-const yellowTargets =
-    [];
+const yellowTargets = [
 
-for (
-    let i = 0;
-    i < 5;
-    i++
-) {
+    addTarget(
+        "yellow-targets",
+        "アヒル100.png",
+        100,
+        520,
+        350
+    ),
 
-    const duck =
-        addTarget(
-            "yellow-targets",
-            "アヒル100.png",
-            100,
-            520 + i * 80,
-            350,
-            120
-        );
+    addTarget(
+        "yellow-targets",
+        "アヒル100.png",
+        100,
+        600,
+        350
+    ),
 
-    yellowTargets.push(
-        duck
-    );
-}
+    addTarget(
+        "yellow-targets",
+        "アヒル100.png",
+        100,
+        680,
+        350
+    ),
 
+    addTarget(
+        "yellow-targets",
+        "アヒル100.png",
+        100,
+        760,
+        350
+    ),
+
+    addTarget(
+        "yellow-targets",
+        "アヒル100.png",
+        100,
+        840,
+        350
+    )
+
+].filter(Boolean);
 
 let yellowDirection = 1;
 
+const yellowSpeed = 0.4;
 
-setInterval(
-    function () {
+const waterLeft = 500;
+const waterRight = 1000;
 
-        if (
-            !gameStarted ||
-            gameOver
-        ) {
-            return;
+function moveYellowTargets() {
+
+    yellowTargets.forEach(
+        function (target) {
+
+            let currentX =
+                parseFloat(
+                    target.style.left
+                );
+
+            currentX +=
+                yellowSpeed *
+                yellowDirection;
+
+            target.style.left =
+                currentX + "px";
+
         }
-
-
-        yellowTargets.forEach(
-            function (duck) {
-
-                if (!duck) {
-                    return;
-                }
-
-
-                let x =
-                    parseFloat(
-                        duck.style.left
-                    );
-
-
-                x +=
-                    12
-                    * yellowDirection;
-
-
-                if (x >= 880) {
-
-                    yellowDirection =
-                        -1;
-
-                }
-
-
-                if (x <= 500) {
-
-                    yellowDirection =
-                        1;
-                }
-
-
-                duck.style.transition =
-                    "left 1s linear";
-
-                duck.style.left =
-                    x + "px";
-            }
-        );
-
-    },
-    1000
-);
-
-
-/* =========================================================
-   🦆 緑のアヒル
-   100点
-========================================================= */
-
-const greenTargets =
-    [];
-
-for (
-    let i = 0;
-    i < 5;
-    i++
-) {
-
-    const duck =
-        addTarget(
-            "green-targets",
-            "アヒル100.png",
-            100,
-            520 + i * 80,
-            400,
-            120
-        );
-
-    greenTargets.push(
-        duck
     );
+
+    if (
+        yellowTargets.length === 0
+    ) {
+        return;
+    }
+
+    const leftEdge =
+        parseFloat(
+            yellowTargets[0].style.left
+        );
+
+    const lastTarget =
+        yellowTargets[
+            yellowTargets.length - 1
+        ];
+
+    const rightEdge =
+        parseFloat(
+            lastTarget.style.left
+        ) +
+        lastTarget.offsetWidth;
+
+    if (
+        leftEdge <= waterLeft ||
+        rightEdge >= waterRight
+    ) {
+
+        yellowDirection *= -1;
+
+    }
+
+    requestAnimationFrame(
+        moveYellowTargets
+    );
+
 }
 
+moveYellowTargets();
+
+/* =========================================================
+   🟢 緑のアヒル
+========================================================= */
+
+const greenTargets = [
+
+    addTarget(
+        "green-targets",
+        "アヒル100.png",
+        100,
+        520,
+        400
+    ),
+
+    addTarget(
+        "green-targets",
+        "アヒル100.png",
+        100,
+        600,
+        400
+    ),
+
+    addTarget(
+        "green-targets",
+        "アヒル100.png",
+        100,
+        680,
+        400
+    ),
+
+    addTarget(
+        "green-targets",
+        "アヒル100.png",
+        100,
+        760,
+        400
+    ),
+
+    addTarget(
+        "green-targets",
+        "アヒル100.png",
+        100,
+        840,
+        400
+    )
+
+].filter(Boolean);
 
 let greenDirection = 1;
 
+const greenSpeed = 0.6;
 
-setInterval(
-    function () {
+function moveGreenTargets() {
 
-        if (
-            !gameStarted ||
-            gameOver
-        ) {
-            return;
+    greenTargets.forEach(
+        function (target) {
+
+            let currentX =
+                parseFloat(
+                    target.style.left
+                );
+
+            currentX +=
+                greenSpeed *
+                greenDirection;
+
+            target.style.left =
+                currentX + "px";
+
         }
+    );
 
+    if (
+        greenTargets.length === 0
+    ) {
+        return;
+    }
 
-        greenTargets.forEach(
-            function (duck) {
-
-                if (!duck) {
-                    return;
-                }
-
-
-                let x =
-                    parseFloat(
-                        duck.style.left
-                    );
-
-
-                x +=
-                    10
-                    * greenDirection;
-
-
-                if (x >= 880) {
-
-                    greenDirection =
-                        -1;
-
-                }
-
-
-                if (x <= 500) {
-
-                    greenDirection =
-                        1;
-                }
-
-
-                duck.style.transition =
-                    "left 1s linear";
-
-                duck.style.left =
-                    x + "px";
-            }
+    const leftEdge =
+        parseFloat(
+            greenTargets[0].style.left
         );
 
-    },
-    1000
-);
+    const lastTarget =
+        greenTargets[
+            greenTargets.length - 1
+        ];
 
+    const rightEdge =
+        parseFloat(
+            lastTarget.style.left
+        ) +
+        lastTarget.offsetWidth;
+
+    if (
+        leftEdge <= waterLeft ||
+        rightEdge >= waterRight
+    ) {
+
+        greenDirection *= -1;
+
+    }
+
+    requestAnimationFrame(
+        moveGreenTargets
+    );
+
+}
+
+moveGreenTargets();
 
 /* =========================================================
-   🦝 アライグマ
-   300点
+   🟠 アライグマ 300点
 ========================================================= */
 
 addTarget(
     "orange-targets",
-    "アライグマ.png",
+    "reccoon.png",
     300,
     250,
     460,
@@ -838,7 +1116,7 @@ addTarget(
 
 addTarget(
     "orange-targets",
-    "アライグマ.png",
+    "reccoon.png",
     300,
     450,
     460,
@@ -847,17 +1125,15 @@ addTarget(
 
 addTarget(
     "orange-targets",
-    "アライグマ.png",
+    "reccoon.png",
     300,
     650,
     460,
     250
 );
 
-
 /* =========================================================
-   🐦 ことり
-   1000点
+   🐦 ことり 1000点
 ========================================================= */
 
 addTarget(
@@ -887,53 +1163,31 @@ addTarget(
     100
 );
 
-
 /* =========================================================
-   🐔 チキン
-   500点
+   🐔 ニワトリ 500点
 ========================================================= */
 
 const chicken =
     addTarget(
         "chicken-targets",
-        "レックス500.png",
+        "ニワトリ.png",
         500,
-        -150,
+        100,
         500,
         300
     );
 
-
-let chickenMoving =
-    false;
-
-
 function moveChicken() {
 
-    if (
-        !chicken ||
-        !gameStarted ||
-        gameOver
-    ) {
+    if (!chicken) {
         return;
     }
-
-
-    if (chickenMoving) {
-        return;
-    }
-
-
-    chickenMoving =
-        true;
-
 
     chicken.style.transition =
-        "left 7s linear";
+        "none";
 
     chicken.style.left =
-        "991px";
-
+        "-150px";
 
     setTimeout(
         function () {
@@ -941,30 +1195,74 @@ function moveChicken() {
             if (!gameOver) {
 
                 chicken.style.transition =
-                    "none";
+                    "left 7s linear";
 
                 chicken.style.left =
-                    "-150px";
+                    "991px";
 
-                chickenMoving =
-                    false;
             }
 
         },
-        7200
+        50
     );
+
 }
 
+moveChicken();
 
 setInterval(
-    moveChicken,
-    9000
+    function () {
+
+        if (!gameOver) {
+            moveChicken();
+        }
+
+    },
+    7000
 );
 
+/* =========================================================
+   Joy-Con接続
+========================================================= */
+
+window.addEventListener(
+    "gamepadconnected",
+    function (event) {
+
+        console.log(
+            "Joy-Con接続:",
+            event.gamepad.index,
+            event.gamepad.id
+        );
+
+    }
+);
+
+window.addEventListener(
+    "gamepaddisconnected",
+    function (event) {
+
+        console.log(
+            "Joy-Con切断:",
+            event.gamepad.index
+        );
+
+    }
+);
 
 /* =========================================================
-   🐰 うさぎ
-   300点
+   Joy-Con操作
+========================================================= */
+
+function updateGamepads() {
+
+    const pads = navigator.getGamepads();
+
+    let leftPad = null;
+    let rightPad = null;
+
+/* =========================================================
+   🐰 うさぎ 300点
    レックスのように跳ねながら横移動
 ========================================================= */
 
@@ -973,61 +1271,33 @@ const rabbit =
         "rabbit-targets",
         "うさぎ.png",
         300,
-        180,
+        250,
         250,
         170
     );
 
-
-let rabbitDirection =
-    1;
-
+let rabbitDirection = 1;
+let rabbitSteps = 0;
 
 function moveRabbit() {
 
-    if (
-        !rabbit ||
-        !gameStarted ||
-        gameOver
-    ) {
+    if (!rabbit) {
         return;
     }
 
-
-    let currentX =
-        parseFloat(
-            rabbit.style.left
-        );
-
-
-    currentX +=
-        120 * rabbitDirection;
-
-
-    if (
-        currentX >= 700
-    ) {
-
-        rabbitDirection =
-            -1;
-    }
-
-
-    if (
-        currentX <= 100
-    ) {
-
-        rabbitDirection =
-            1;
-    }
-
+    const currentX =
+        parseFloat(rabbit.style.left);
 
     rabbit.style.transition =
         "left 1.5s ease-in-out";
 
     rabbit.style.left =
-        currentX + "px";
+        (
+            currentX +
+            120 * rabbitDirection
+        ) + "px";
 
+    /* 跳ねる */
 
     rabbit.classList.remove(
         "rabbit-jump"
@@ -1038,33 +1308,41 @@ function moveRabbit() {
     rabbit.classList.add(
         "rabbit-jump"
     );
+
+    rabbitSteps++;
+
+    if (rabbitSteps >= 1) {
+
+        rabbitDirection *= -1;
+        rabbitSteps = 0;
+
+    }
+
 }
 
+/* 1.5秒ごとに移動 */
 
 setInterval(
     moveRabbit,
     1500
 );
 
-
 /* =========================================================
-   🐱 猫
-   400点
+   🐱 猫 400点
+   固定
 ========================================================= */
 
 addTarget(
     "cat-targets",
     "ねこ.png",
     400,
-    780,
+    900,
     230,
     180
 );
 
-
 /* =========================================================
-   🐐 やぎ
-   600点
+   🐐 やぎ 600点
    山を登るように移動
 ========================================================= */
 
@@ -1073,38 +1351,31 @@ const goat =
         "goat-targets",
         "やぎ.png",
         600,
-        120,
-        500,
-        150
+        350,
+        650,
+        180
     );
 
-
-let goatStep =
-    0;
-
+let goatStep = 0;
 
 function moveGoat() {
 
-    if (
-        !goat ||
-        !gameStarted ||
-        gameOver
-    ) {
+    if (!goat) {
         return;
     }
 
-
     goatStep++;
 
+    /*
+       山を登っていく
+       左下 → 右上
+    */
 
     const goatX =
-        120
-        + goatStep * 80;
+        350 + goatStep * 70;
 
     const goatY =
-        500
-        - goatStep * 45;
-
+        650 - goatStep * 45;
 
     goat.style.transition =
         "left 1.2s ease-in-out, top 1.2s ease-in-out";
@@ -1115,63 +1386,53 @@ function moveGoat() {
     goat.style.top =
         goatY + "px";
 
+    /* 右上まで行ったら最初に戻る */
 
-    if (
-        goatStep >= 7
-    ) {
+    if (goatStep >= 7) {
 
-        goatStep =
-            0;
-
+        goatStep = 0;
 
         setTimeout(
             function () {
-
-                if (!goat) {
-                    return;
-                }
-
 
                 goat.style.transition =
                     "none";
 
                 goat.style.left =
-                    "120px";
+                    "350px";
 
                 goat.style.top =
-                    "500px";
+                    "650px";
 
             },
             1200
         );
-    }
-}
 
+    }
+
+}
 
 setInterval(
     moveGoat,
     1200
 );
 
-
 /* =========================================================
-   🦖 レクサー
-   500点
+   🦖 レクサー 500点
+   固定
 ========================================================= */
 
 addTarget(
     "rexer-targets",
     "レクサー.png",
     500,
-    780,
-    150,
-    180
+    1100,
+    180,
+    200
 );
 
-
 /* =========================================================
-   🐦 スズメ
-   500点
+   🐦 スズメ 500点
    空を飛ぶように横移動
 ========================================================= */
 
@@ -1180,150 +1441,126 @@ const sparrow =
         "sparrow-targets",
         "スズメ.png",
         500,
-        250,
-        80,
+        300,
+        100,
         120
     );
 
-
-let sparrowDirection =
-    1;
-
+let sparrowDirection = 1;
 
 function moveSparrow() {
 
-    if (
-        !sparrow ||
-        !gameStarted ||
-        gameOver
-    ) {
+    if (!sparrow) {
         return;
     }
 
-
-    let currentX =
+    const currentX =
         parseFloat(
             sparrow.style.left
         );
-
-
-    currentX +=
-        250 * sparrowDirection;
-
-
-    if (
-        currentX >= 750
-    ) {
-
-        sparrowDirection =
-            -1;
-    }
-
-
-    if (
-        currentX <= 100
-    ) {
-
-        sparrowDirection =
-            1;
-    }
-
 
     sparrow.style.transition =
         "left 3s ease-in-out";
 
     sparrow.style.left =
-        currentX + "px";
-}
+        (
+            currentX +
+            300 * sparrowDirection
+        ) + "px";
 
+    /* 端まで行ったら反対方向 */
+
+    if (
+        currentX >= 1000
+    ) {
+
+        sparrowDirection = -1;
+
+    }
+
+    if (
+        currentX <= 200
+    ) {
+
+        sparrowDirection = 1;
+
+    }
+
+}
 
 setInterval(
     moveSparrow,
     3000
 );
 
+    /* -----------------------------------------
+       接続されているJoy-Conを2台取得
+    ----------------------------------------- */
 
-/* =========================================================
-   🎮 Joy-Con接続
-========================================================= */
-
-function updateGamepads() {
-
-    const pads =
-        navigator.getGamepads();
-
-
-    leftPad =
-        null;
-
-    rightPad =
-        null;
-
-
-    for (
-        const pad of pads
-    ) {
+    for (const pad of pads) {
 
         if (!pad) {
             continue;
         }
 
-
-        /*
-         * 最初に見つかったコントローラー
-         * → LEFT
-         */
-
         if (!leftPad) {
-
-            leftPad =
-                pad;
-
-            continue;
+            leftPad = pad;
+        }
+        else if (!rightPad) {
+            rightPad = pad;
         }
 
-
-        /*
-         * 2台目
-         * → RIGHT
-         */
-
-        if (!rightPad) {
-
-            rightPad =
-                pad;
-        }
     }
 
+    /* =====================================================
+       左Joy-Con
+    ===================================================== */
 
-    /* -----------------------------------------------------
-       LEFT Joy-Con
-       axes 0 / 1
-    ----------------------------------------------------- */
+    if (leftPad) {
 
-    if (
-        leftPad &&
-        gameStarted &&
-        !gameOver
-    ) {
+        /* 左Joy-Conのスティック */
 
-        const x =
-            leftPad.axes[0] || 0;
+        const axisX =
+            Math.abs(leftPad.axes[0]) > 0.15
+                ? leftPad.axes[0]
+                : 0;
 
-        const y =
-            leftPad.axes[1] || 0;
+        const axisY =
+            Math.abs(leftPad.axes[1]) > 0.15
+                ? leftPad.axes[1]
+                : 0;
 
+        leftX += axisX * cursorSpeed;
+        leftY += axisY * cursorSpeed;
 
-        movePlayerCursor(
-            "left",
-            x,
-            y
-        );
+        /* 画面外に出ないようにする */
 
+        leftX =
+            Math.max(
+                0,
+                Math.min(1024, leftX)
+            );
 
-        /*
-         * ボタンが押されたら発射
-         */
+        leftY =
+            Math.max(
+                0,
+                Math.min(661, leftY)
+            );
+
+        /* 照準を移動 */
+
+        leftCursor.style.left =
+            leftX + "px";
+
+        leftCursor.style.top =
+            leftY + "px";
+
+        /* -----------------------------------------
+           左Joy-Conのボタン
+           どのボタンでも発射
+        ----------------------------------------- */
+
+        let leftPressed = false;
 
         for (
             let i = 0;
@@ -1336,40 +1573,88 @@ function updateGamepads() {
                 leftPad.buttons[i].pressed
             ) {
 
-                fireFromCursor(
-                    "left"
-                );
-
+                leftPressed = true;
                 break;
+
             }
+
         }
+
+        /* 押した瞬間だけ発射 */
+
+        if (
+            leftPressed &&
+            !leftFirePressed
+        ) {
+
+            console.log(
+                "LEFT FIRE",
+                leftX,
+                leftY
+            );
+
+            shootAt(
+                leftX,
+                leftY,
+                "left"
+            );
+
+        }
+
+        leftFirePressed =
+            leftPressed;
+
     }
 
+    /* =====================================================
+       右Joy-Con
+    ===================================================== */
 
-    /* -----------------------------------------------------
-       RIGHT Joy-Con
-       axes 0 / 1
-    ----------------------------------------------------- */
+    if (rightPad) {
 
-    if (
-        rightPad &&
-        gameStarted &&
-        !gameOver
-    ) {
+        /* 右Joy-Conも axes 0,1 */
 
-        const x =
-            rightPad.axes[0] || 0;
+        const axisX =
+            Math.abs(rightPad.axes[0]) > 0.15
+                ? rightPad.axes[0]
+                : 0;
 
-        const y =
-            rightPad.axes[1] || 0;
+        const axisY =
+            Math.abs(rightPad.axes[1]) > 0.15
+                ? rightPad.axes[1]
+                : 0;
 
+        rightX += axisX * cursorSpeed;
+        rightY += axisY * cursorSpeed;
 
-        movePlayerCursor(
-            "right",
-            x,
-            y
-        );
+        /* 画面外に出ないようにする */
 
+        rightX =
+            Math.max(
+                0,
+                Math.min(1024, rightX)
+            );
+
+        rightY =
+            Math.max(
+                0,
+                Math.min(661, rightY)
+            );
+
+        /* 照準を移動 */
+
+        rightCursor.style.left =
+            rightX + "px";
+
+        rightCursor.style.top =
+            rightY + "px";
+
+        /* -----------------------------------------
+           右Joy-Conのボタン
+           どのボタンでも発射
+        ----------------------------------------- */
+
+        let rightPressed = false;
 
         for (
             let i = 0;
@@ -1382,918 +1667,719 @@ function updateGamepads() {
                 rightPad.buttons[i].pressed
             ) {
 
-                fireFromCursor(
-                    "right"
-                );
-
+                rightPressed = true;
                 break;
-            }
-        }
-    }
 
+            }
+
+        }
+
+        /* 押した瞬間だけ発射 */
+
+        if (
+            rightPressed &&
+            !rightFirePressed
+        ) {
+
+            console.log(
+                "RIGHT FIRE",
+                rightX,
+                rightY
+            );
+
+            shootAt(
+                rightX,
+                rightY,
+                "right"
+            );
+
+        }
+
+        rightFirePressed =
+            rightPressed;
+
+    }
 
     requestAnimationFrame(
         updateGamepads
     );
+
 }
 
-
-/* =========================================================
-   プレイヤーカーソル
-========================================================= */
-
-const playerCursors =
-    {};
-
-
-/* ---------------------------------------------------------
-   LEFT
---------------------------------------------------------- */
-
-playerCursors.left =
-    document.createElement(
-        "div"
-    );
-
-playerCursors.left.className =
-    "player-cursor";
-
-playerCursors.left.textContent =
-    "🩷";
-
-
-playerCursors.left.style.position =
-    "absolute";
-
-playerCursors.left.style.left =
-    "300px";
-
-playerCursors.left.style.top =
-    "300px";
-
-playerCursors.left.style.fontSize =
-    "50px";
-
-playerCursors.left.style.zIndex =
-    "9999";
-
-playerCursors.left.style.pointerEvents =
-    "none";
-
-
-/* ---------------------------------------------------------
-   RIGHT
---------------------------------------------------------- */
-
-playerCursors.right =
-    document.createElement(
-        "div"
-    );
-
-playerCursors.right.className =
-    "player-cursor";
-
-playerCursors.right.textContent =
-    "🩵";
-
-
-playerCursors.right.style.position =
-    "absolute";
-
-playerCursors.right.style.left =
-    "700px";
-
-playerCursors.right.style.top =
-    "300px";
-
-playerCursors.right.style.fontSize =
-    "50px";
-
-playerCursors.right.style.zIndex =
-    "9999";
-
-playerCursors.right.style.pointerEvents =
-    "none";
-
-
-if (game) {
-
-    game.appendChild(
-        playerCursors.left
-    );
-
-    game.appendChild(
-        playerCursors.right
-    );
-}
-
-
-/* =========================================================
-   カーソル移動
-========================================================= */
-
-const cursorSpeed =
-    5;
-
-
-function movePlayerCursor(
-    player,
-    axisX,
-    axisY
-) {
-
-    const cursor =
-        playerCursors[player];
-
-
-    if (!cursor) {
-        return;
-    }
-
-
-    let x =
-        parseFloat(
-            cursor.style.left
-        );
-
-    let y =
-        parseFloat(
-            cursor.style.top
-        );
-
-
-    if (
-        Math.abs(axisX) <
-        0.15
-    ) {
-
-        axisX = 0;
-    }
-
-
-    if (
-        Math.abs(axisY) <
-        0.15
-    ) {
-
-        axisY = 0;
-    }
-
-
-    x +=
-        axisX * cursorSpeed;
-
-    y +=
-        axisY * cursorSpeed;
-
-
-    const cursorSize =
-        50;
-
-
-    x =
-        Math.max(
-            0,
-            Math.min(
-                GAME_WIDTH -
-                cursorSize,
-                x
-            )
-        );
-
-
-    y =
-        Math.max(
-            0,
-            Math.min(
-                GAME_HEIGHT -
-                cursorSize,
-                y
-            )
-        );
-
-
-    cursor.style.left =
-        x + "px";
-
-    cursor.style.top =
-        y + "px";
-}
-
-
-/* =========================================================
-   カーソル位置から発射
-========================================================= */
-
-function fireFromCursor(
-    player
-) {
-
-    const cursor =
-        playerCursors[player];
-
-
-    if (!cursor) {
-        return;
-    }
-
-
-    const x =
-        parseFloat(
-            cursor.style.left
-        ) + 25;
-
-    const y =
-        parseFloat(
-            cursor.style.top
-        ) + 25;
-
-
-    shootAt(
-        x,
-        y,
-        player
-    );
-}
-
-
-/* =========================================================
-   マウス照準
-========================================================= */
-
-if (game) {
-
-    game.addEventListener(
-        "mousemove",
-        function (event) {
-
-            if (!gameStarted) {
-                return;
-            }
-
-
-            const rect =
-                game.getBoundingClientRect();
-
-
-            const x =
-                (event.clientX - rect.left)
-                * GAME_WIDTH
-                / rect.width;
-
-
-            const y =
-                (event.clientY - rect.top)
-                * GAME_HEIGHT
-                / rect.height;
-
-
-            if (playerCursors.left) {
-
-                playerCursors.left.style.left =
-                    (x - 25) + "px";
-
-                playerCursors.left.style.top =
-                    (y - 25) + "px";
-            }
-        }
-    );
-
-
-    game.addEventListener(
-        "click",
-        function (event) {
-
-            /*
-             * 的自身のclickで処理した場合は
-             * ここでは二重判定しない
-             */
-
-            if (
-                event.target.classList.contains(
-                    "shooting-target"
-                )
-            ) {
-                return;
-            }
-
-
-            const rect =
-                game.getBoundingClientRect();
-
-
-            const x =
-                (event.clientX - rect.left)
-                * GAME_WIDTH
-                / rect.width;
-
-
-            const y =
-                (event.clientY - rect.top)
-                * GAME_HEIGHT
-                / rect.height;
-
-
-            shootAt(
-                x,
-                y,
-                "left"
-            );
-        }
-    );
-}
-
-
-/* =========================================================
-   ゲーム開始
-========================================================= */
-
-function startGame() {
-
-    if (gameStarted) {
-        return;
-    }
-
-
-    leftScore =
-        0;
-
-    rightScore =
-        0;
-
-
-    updateScores();
-
-
-    gameStarted =
-        false;
-
-    gameOver =
-        false;
-
-
-    practiceMode =
-        false;
-
-
-    timeLeft =
-        30;
-
-
-    updateTimer();
-
-
-    /* スタート画面を消す */
-
-    if (startScreen) {
-
-        startScreen.style.display =
-            "none";
-    }
-
-
-    /* 練習画面を消す */
-
-    if (practiceTargets) {
-
-        practiceTargets.style.display =
-            "none";
-    }
-
-
-    if (practiceText) {
-
-        practiceText.style.display =
-            "none";
-    }
-
-
-    startCountdown();
-}
-
-
-/* =========================================================
-   カウントダウン
-========================================================= */
-
-function startCountdown() {
-
-    const countdown =
-        document.getElementById(
-            "countdown"
-        );
-
-
-    if (!countdown) {
-
-        beginGame();
-
-        return;
-    }
-
-
-    let count =
-        5;
-
-
-    countdown.style.display =
-        "flex";
-
-    countdown.textContent =
-        count;
-
-
-    const interval =
-        setInterval(
-            function () {
-
-                count--;
-
-
-                if (count > 0) {
-
-                    countdown.textContent =
-                        count;
-
-                } else {
-
-                    clearInterval(
-                        interval
-                    );
-
-                    countdown.style.display =
-                        "none";
-
-                    beginGame();
-                }
-
-            },
-            1000
-        );
-}
-
-
-/* =========================================================
-   本編開始
-========================================================= */
-
-function beginGame() {
-
-    gameStarted =
-        true;
-
-    gameOver =
-        false;
-
-    practiceMode =
-        false;
-
-
-    timeLeft =
-        30;
-
-    updateTimer();
-
-
-    /*
-     * ゲーム開始時に的を全部表示
-     */
-
-    document
-        .querySelectorAll(
-            ".shooting-target"
-        )
-        .forEach(
-            function (target) {
-
-                if (
-                    target !== bullseye
-                ) {
-
-                    target.style.display =
-                        "block";
-                }
-            }
-        );
-
-
-    /*
-     * ブルズアイは5秒後
-     */
-
-    if (bullseye) {
-
-        bullseye.style.display =
-            "none";
-
-
-        setTimeout(
-            function () {
-
-                if (
-                    gameStarted &&
-                    !gameOver
-                ) {
-
-                    bullseye.style.display =
-                        "block";
-                }
-
-            },
-            5000
-        );
-    }
-
-
-    startTimer();
-}
-
-
+updateGamepads();
 /* =========================================================
    30秒タイマー
 ========================================================= */
 
-let timerInterval =
-    null;
+function startGameTimer() {
 
-
-function startTimer() {
-
-    if (timerInterval) {
+    if (gameTimer) {
 
         clearInterval(
-            timerInterval
+            gameTimer
         );
+
     }
 
+    timeLeft = 30;
 
-    timerInterval =
+    gameOver = false;
+
+    timerText.textContent =
+        "Time: 30";
+
+    gameTimer =
         setInterval(
             function () {
 
-                if (
-                    !gameStarted ||
-                    gameOver
-                ) {
-
-                    return;
-                }
-
-
                 timeLeft--;
 
+                timerText.textContent =
+                    "Time: " +
+                    timeLeft;
 
-                updateTimer();
+                /* 残り5秒 */
 
+                if (
+                    timeLeft <= 5 &&
+                    timeLeft > 0
+                ) {
+
+                    showGameCountdown(
+                        timeLeft
+                    );
+
+                }
+
+                /* 0秒 */
 
                 if (
                     timeLeft <= 0
                 ) {
 
-                    endGame();
+                    clearInterval(
+                        gameTimer
+                    );
+
+                    gameTimer = null;
+
+                    gameOver = true;
+                    gameStarted = false;
+
+                    timerText.textContent =
+                        "Time: 0";
+
+                    hideGameCountdown();
+
+                    /* 上下の幕を閉める */
+
+                    gameArea.classList.remove(
+                        "curtain-open"
+                    );
+
+                    gameArea.classList.add(
+                        "curtain-close"
+                    );
+
+                    /* 0.8秒後に結果 */
+
+                    setTimeout(
+                        function () {
+
+                            showFinalScore();
+
+                        },
+                        800
+                    );
+
                 }
 
             },
             1000
         );
+
 }
 
-
 /* =========================================================
-   ゲーム終了
+   残り5秒カウントダウン
 ========================================================= */
 
-function endGame() {
+function showGameCountdown(number) {
 
-    gameOver =
-        true;
-
-    gameStarted =
-        false;
-
-
-    if (timerInterval) {
-
-        clearInterval(
-            timerInterval
-        );
-
-        timerInterval =
-            null;
-    }
-
-
-    timeLeft =
-        0;
-
-    updateTimer();
-
-
-    /*
-     * 最終結果画面
-     */
-
-    const finalScore =
+    let element =
         document.getElementById(
-            "final-score"
+            "game-countdown"
         );
 
+    if (!element) {
 
-    if (finalScore) {
+        element =
+            document.createElement(
+                "div"
+            );
 
-        finalScore.style.display =
-            "flex";
-    }
+        element.id =
+            "game-countdown";
 
-
-    const finalLeft =
-        document.getElementById(
-            "final-left-score"
+        gameArea.appendChild(
+            element
         );
 
-
-    const finalRight =
-        document.getElementById(
-            "final-right-score"
-        );
-
-
-    if (finalLeft) {
-
-        finalLeft.textContent =
-            leftScore;
     }
 
+    element.textContent =
+        number;
 
-    if (finalRight) {
+    element.style.display =
+        "flex";
 
-        finalRight.textContent =
-            rightScore;
-    }
-
-
-    /*
-     * 古いIDにも対応
-     */
-
-    const leftResult =
-        document.getElementById(
-            "left-final-score"
-        );
-
-    const rightResult =
-        document.getElementById(
-            "right-final-score"
-        );
-
-
-    if (leftResult) {
-
-        leftResult.textContent =
-            leftScore;
-    }
-
-
-    if (rightResult) {
-
-        rightResult.textContent =
-            rightScore;
-    }
 }
 
+function hideGameCountdown() {
+
+    const element =
+        document.getElementById(
+            "game-countdown"
+        );
+
+    if (element) {
+
+        element.style.display =
+            "none";
+
+    }
+
+}
 
 /* =========================================================
-   スタートボタン
+   スタート画面
+========================================================= */
+
+const startButton =
+    document.getElementById(
+        "start-button"
+    );
+
+const startScreen =
+    document.getElementById(
+        "start-screen"
+    );
+
+const countdown =
+    document.getElementById(
+        "countdown"
+    );
+
+/* =========================================================
+   練習用の的
+========================================================= */
+
+const practiceTarget1 =
+    addTarget(
+        "practice-targets",
+        "練習的.png",
+        0,
+        -80,
+        130,
+        700
+    );
+
+const practiceTarget2 =
+    addTarget(
+        "practice-targets",
+        "練習的.png",
+        0,
+        380,
+        130,
+        700
+    );
+
+if (practiceTarget1) {
+
+    practiceTarget1.style.display =
+        "none";
+
+}
+
+if (practiceTarget2) {
+
+    practiceTarget2.style.display =
+        "none";
+
+}
+
+/* =========================================================
+   STARTボタン
 ========================================================= */
 
 if (startButton) {
 
     startButton.addEventListener(
         "click",
-        startGame
-    );
+        function () {
+
+            console.log(
+                "STARTボタンが押されました"
+            );
+
+            /* 二重スタート防止 */
+
+            if (
+                practiceMode ||
+                gameStarted
+            ) {
+                return;
+            }
+
+            /* STARTボタンを消す */
+
+            startButton.style.display =
+                "none";
+
+/* 状態 */
+
+practiceMode = true;
+gameStarted = false;
+gameOver = false;
+
+/* 練習画面全体を表示 */
+
+practiceTargets.style.display = "block";
+
+/* 練習用の的を表示 */
+
+if (practiceTarget1) {
+
+    practiceTarget1.style.display =
+        "block";
+
 }
 
+if (practiceTarget2) {
+
+    practiceTarget2.style.display =
+        "block";
+
+}
+
+/* 「的をねらって！」を表示 */
+
+practiceText.style.display = "block";
+
+            /* 10秒後 */
+
+            setTimeout(
+                function () {
+
+                    /* 練習終了 */
+
+                    practiceMode =
+                        false;
+
+                    /* 練習の的を消す */
+
+                    if (practiceTarget1) {
+
+                        practiceTarget1.style.display =
+                            "none";
+
+                    }
+
+                    if (practiceTarget2) {
+
+                        practiceTarget2.style.display =
+                            "none";
+
+                    }
+
+                    const practiceContainer =
+                        document.getElementById(
+                            "practice-targets"
+                        );
+
+                    if (practiceContainer) {
+
+                        practiceContainer.style.display =
+                            "none";
+
+                    }
+
+                    /* 練習文字も消す */
+
+                    const practiceText =
+                        document.getElementById(
+                            "practice-text"
+                        );
+
+                    if (practiceText) {
+
+                        practiceText.style.display =
+                            "none";
+
+                    }
+
+                    /* スタート背景を消す */
+
+                    if (startScreen) {
+
+                        startScreen.style.display =
+                            "none";
+
+                    }
+
+                    /* 3・2・1 */
+
+                    if (countdown) {
+
+                        countdown.style.display =
+                            "flex";
+
+                        let count = 3;
+
+                        countdown.textContent =
+                            count;
+
+                        const countdownTimer =
+                            setInterval(
+                                function () {
+
+                                    count--;
+
+                                    if (
+                                        count > 0
+                                    ) {
+
+                                        countdown.textContent =
+                                            count;
+
+                                    }
+
+                                    else {
+
+                                        clearInterval(
+                                            countdownTimer
+                                        );
+
+                                        countdown.style.display =
+                                            "none";
+
+                                        /* 幕を開ける */
+
+                                        gameArea.classList.remove(
+                                            "curtain-close"
+                                        );
+
+                                        gameArea.classList.add(
+                                            "curtain-open"
+                                        );
+
+                                        /* 本番開始 */
+
+                                        gameStarted =
+                                            true;
+
+                                        gameOver =
+                                            false;
+
+                                        /* 得点リセット */
+
+                                        leftScore =
+                                            0;
+
+                                        rightScore =
+                                            0;
+
+                                        updateScores();
+
+                                        /* タイマー開始 */
+
+                                        startGameTimer();
+
+                                        /* 本番用の的を表示 */
+
+                                        document
+                                            .querySelectorAll(
+                                                "#game img.shooting-target"
+                                            )
+                                            .forEach(
+                                                function (target) {
+
+                                                    if (
+                                                        target !==
+                                                        practiceTarget1 &&
+                                                        target !==
+                                                        practiceTarget2
+                                                    ) {
+
+                                                        target.style.display =
+                                                            "block";
+
+                                                    }
+
+                                                }
+                                            );
+
+                                    }
+
+                                },
+                                1000
+                            );
+
+                    }
+
+                },
+                10000
+            );
+
+        }
+    );
+
+}
+else {
+
+    console.error(
+        "STARTボタンが見つかりません"
+    );
+
+}
 
 /* =========================================================
-   練習モード
+   最終得点
 ========================================================= */
 
-function startPractice() {
+function showFinalScore() {
 
-    gameStarted =
-        true;
-
-    gameOver =
-        false;
-
-    practiceMode =
-        true;
-
-
-    if (startScreen) {
-
-        startScreen.style.display =
-            "none";
-    }
-
-
-    if (practiceTargets) {
-
-        practiceTargets.style.display =
-            "block";
-    }
-
-
-    if (practiceText) {
-
-        practiceText.style.display =
-            "block";
-    }
-
-
-    /*
-     * 練習用の大きな的
-     */
-
-    if (practiceTargets) {
-
-        practiceTargets.innerHTML =
-            "";
-
-        const target1 =
-            document.createElement(
-                "img"
-            );
-
-        target1.src =
-            "アヒル100.png";
-
-        target1.style.position =
-            "absolute";
-
-        target1.style.left =
-            "-80px";
-
-        target1.style.top =
-            "130px";
-
-        target1.style.width =
-            "700px";
-
-        target1.style.pointerEvents =
-            "none";
-
-
-        const target2 =
-            document.createElement(
-                "img"
-            );
-
-        target2.src =
-            "アヒル100.png";
-
-        target2.style.position =
-            "absolute";
-
-        target2.style.left =
-            "380px";
-
-        target2.style.top =
-            "130px";
-
-        target2.style.width =
-            "700px";
-
-        target2.style.pointerEvents =
-            "none";
-
-
-        practiceTargets.appendChild(
-            target1
+    const finalCurtain =
+        document.getElementById(
+            "final-curtain"
         );
 
-        practiceTargets.appendChild(
-            target2
+    if (finalCurtain) {
+
+        finalCurtain.classList.add(
+            "open"
         );
+
     }
+
+    setTimeout(
+        function () {
+
+            if (
+                document.getElementById(
+                    "final-score"
+                )
+            ) {
+                return;
+            }
+
+            const finalScore =
+                document.createElement(
+                    "div"
+                );
+
+            finalScore.id =
+                "final-score";
+
+            finalScore.innerHTML = `
+                <div class="final-left">
+                    ${leftScore}
+                </div>
+
+                <div class="final-right">
+                    ${rightScore}
+                </div>
+            `;
+
+            gameArea.appendChild(
+                finalScore
+            );
+
+        },
+        900
+    );
+
 }
 
-
 /* =========================================================
-   画面サイズ調整
+   画面いっぱいに表示
 ========================================================= */
 
 function resizeGame() {
 
-    if (!game) {
-        return;
-    }
+    const game =
+        document.getElementById("game");
 
+    if (!game) return;
+
+    const GAME_WIDTH = 1024;
+    const GAME_HEIGHT = 661;
+
+    /* -----------------------------------------
+       MacBook画面に合わせて倍率を計算
+    ----------------------------------------- */
 
     const scaleX =
-        window.innerWidth /
-        GAME_WIDTH;
-
+        window.innerWidth / GAME_WIDTH;
 
     const scaleY =
-        window.innerHeight /
-        GAME_HEIGHT;
-
+        window.innerHeight / GAME_HEIGHT;
 
     const scale =
-        Math.min(
-            scaleX,
-            scaleY
-        );
+        Math.min(scaleX, scaleY);
 
+    /* -----------------------------------------
+       ゲーム本体
+    ----------------------------------------- */
+
+    game.style.width =
+        GAME_WIDTH + "px";
+
+    game.style.height =
+        GAME_HEIGHT + "px";
+
+    /* -----------------------------------------
+       ゲーム全体を拡大・縮小
+    ----------------------------------------- */
 
     game.style.transform =
         "scale(" + scale + ")";
 
+    /* -----------------------------------------
+       画面の中央に配置
+    ----------------------------------------- */
 
-    game.style.transformOrigin =
-        "center center";
+    game.style.left =
+        ((window.innerWidth -
+        GAME_WIDTH * scale) / 2) + "px";
+
+    game.style.top =
+        ((window.innerHeight -
+        GAME_HEIGHT * scale) / 2) + "px";
 }
 
-
+/* 画面サイズが変わったとき */
 window.addEventListener(
     "resize",
     resizeGame
 );
 
-
+/* 最初に実行 */
 resizeGame();
-
-
-/* =========================================================
-   Joy-Con開始
-========================================================= */
-
-window.addEventListener(
-    "gamepadconnected",
-    function (event) {
-
-        console.log(
-            "Gamepad connected:",
-            event.gamepad.id
-        );
-    }
-);
-
-
-window.addEventListener(
-    "gamepaddisconnected",
-    function (event) {
-
-        console.log(
-            "Gamepad disconnected:",
-            event.gamepad.id
-        );
-    }
-);
-
-
+    
 /* =========================================================
    初期化
 ========================================================= */
 
 updateScores();
 
-updateTimer();
-
-
-/*
- * Joy-Con監視開始
- */
-
-requestAnimationFrame(
-    updateGamepads
-);
-
-
-/* =========================================================
-   最初はゲームを停止
-========================================================= */
-
-if (practiceTargets) {
-
-    practiceTargets.style.display =
-        "none";
-}
-
-
-if (practiceText) {
-
-    practiceText.style.display =
-        "none";
-}
-
-
-/* =========================================================
-   完了
-========================================================= */
-
 console.log(
-    "🎯 Shooting Game loaded!"
+    "ゲームプログラム読み込み完了"
 );
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Shooting Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div id="game">
+        <div id="rabbit-targets"></div>
+<div id="cat-targets"></div>
+<div id="goat-targets"></div>
+<div id="rexer-targets"></div>
+<div id="sparrow-targets"></div>
+
+<!-- =========================
+     スタート画面
+========================= -->
+
+<div id="start-screen">
+    <button id="start-button">START</button>
+</div>
+
+<!-- =========================
+     5秒間の試し撃ち
+========================= -->
+<div id="practice-targets">
+    <div id="practice-text">的をねらって！</div>
+</div>
+<!-- =========================
+     カウントダウン
+========================= -->
+
+<div id="countdown">
+    3
+</div>
+
+<!-- =========================
+     幕
+========================= -->
+<!-- =========================
+     左右から閉じる幕
+========================= -->
+<div id="curtain-top"></div>
+<div id="curtain-bottom"></div>
+<!-- =========================
+     左右から閉じる幕
+========================= -->
+
+<div id="final-curtain">
+    <img src="まわり.png" class="final-curtain-left">
+    <img src="まわり.png" class="final-curtain-right">
+</div>
+
+        <!-- 奥から手前へ -->
+        <img src="背景.png"
+            class="board sky-background">
+        <img src="山.png" class="board mountain">
+        <img src="土.png" class="board soil">
+
+        <!-- 青い的 -->
+        <div id="blue-targets"></div>
+
+        <img src="畑土.png" class="board field-soil">
+        <img src="畑土2.png" class="board field-soil2">
+
+        <img src="家.png" class="board house">
+
+        <!-- 紫の的 -->
+        <div id="purple-targets"></div>
+
+        <img src="草.png" class="board grass">
+
+        <!-- 赤い的 -->
+        <div id="red-targets"></div>
+
+        <img src="土真ん中.png" class="board soil-middle">
+        <img src="木.png" class="board tree">
+        <div id="bird-targets"></div>
+
+        <!-- 黄色の的 -->
+        <div id="yellow-targets"></div>
+        <img src="水.png" class="board water">
+        <div id="green-targets"></div>
+
+        <img src="水2.png" class="board water2">
+        <img src="草手前.png" class="board grass-front">
+        <img src="土手前.png" class="board soil-front">
+
+        <img src="草最前.png" class="board grass-front-most">
+        <div id="orange-targets"></div>
+
+    
+        <img src="土最前.png" class="board soil-front-most">
+        <div id="chicken-targets"></div>
+        <img src="柵.png" class="board fence">
+        <img src="まわり.png" class="board game-frame">
+        <div id="crosshair">＋</div>
+
+    </div>
+
+    <script src="game.js"></script>
+
+</body>
+</html>
