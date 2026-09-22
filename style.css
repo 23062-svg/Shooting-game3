@@ -19,6 +19,7 @@ body {
 
 #game {
     position: absolute;
+
     left: 0;
     top: 0;
 
@@ -26,10 +27,13 @@ body {
     height: 661px;
 
     margin: 0;
+    padding: 0;
+
     overflow: hidden;
 
     transform-origin: top left;
 }
+
 
 /* =========================
    画面上の文字

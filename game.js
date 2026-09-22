@@ -2163,41 +2163,74 @@ function showFinalScore() {
 /* =========================================================
    画面いっぱいに表示
 ========================================================= */
+
 function resizeGame() {
-    const game = document.getElementById("game");
+
+    const game =
+        document.getElementById("game");
 
     if (!game) return;
 
     const GAME_WIDTH = 1024;
     const GAME_HEIGHT = 661;
 
-    // 画面に収まる倍率を計算
-    const scaleX = window.innerWidth / GAME_WIDTH;
-    const scaleY = window.innerHeight / GAME_HEIGHT;
+    /* -----------------------------------------
+       MacBook画面に合わせて倍率を計算
+    ----------------------------------------- */
 
-    // 縦横比を維持
-    const scale = Math.min(scaleX, scaleY);
+    const scaleX =
+        window.innerWidth / GAME_WIDTH;
 
-    // ゲーム本体のサイズ
-    game.style.width = GAME_WIDTH + "px";
-    game.style.height = GAME_HEIGHT + "px";
+    const scaleY =
+        window.innerHeight / GAME_HEIGHT;
 
-    // ゲーム全体を縮小
-    game.style.transform = `scale(${scale})`;
+    const scale =
+        Math.min(scaleX, scaleY);
 
-    // 画面中央に配置
+
+    /* -----------------------------------------
+       ゲーム本体
+    ----------------------------------------- */
+
+    game.style.width =
+        GAME_WIDTH + "px";
+
+    game.style.height =
+        GAME_HEIGHT + "px";
+
+
+    /* -----------------------------------------
+       ゲーム全体を拡大・縮小
+    ----------------------------------------- */
+
+    game.style.transform =
+        "scale(" + scale + ")";
+
+
+    /* -----------------------------------------
+       画面の中央に配置
+    ----------------------------------------- */
+
     game.style.left =
-        ((window.innerWidth - GAME_WIDTH * scale) / 2) + "px";
+        ((window.innerWidth -
+        GAME_WIDTH * scale) / 2) + "px";
 
     game.style.top =
-        ((window.innerHeight - GAME_HEIGHT * scale) / 2) + "px";
+        ((window.innerHeight -
+        GAME_HEIGHT * scale) / 2) + "px";
 }
 
-window.addEventListener("resize", resizeGame);
 
+/* 画面サイズが変わったとき */
+window.addEventListener(
+    "resize",
+    resizeGame
+);
+
+
+/* 最初に実行 */
 resizeGame();
-
-
+    
 /* =========================================================
    初期化
 ========================================================= */
