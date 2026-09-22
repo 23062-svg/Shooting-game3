@@ -655,16 +655,20 @@ h1 {
     pointer-events: none;
 }
 
-/* スズメ：土最前より前 */
 #sparrow-targets {
     position: absolute;
     left: 0;
     top: 0;
     width: 1024px;
     height: 661px;
-    z-index: 155;
+    z-index: 6;
     pointer-events: none;
 }
+
+#sparrow-targets .shooting-target {
+    pointer-events: auto;
+}
+
 /* =========================
    新しく追加した的をクリック可能にする
 ========================= */

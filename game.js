@@ -1714,7 +1714,7 @@ function startGakkiTarget() {
     }
 
     // 5～25秒の間でランダムに出現
-    const randomTime = 5000 + Math.random() * 20000;
+    const randomTime = 3000;
 
     gakkiTimer = setTimeout(function () {
 
@@ -1730,7 +1730,7 @@ function startGakkiTarget() {
             "がっき.png",
             5000,
             700,
-            600,
+            400,
             170
         );
 
