@@ -989,7 +989,10 @@ yellowTargets.forEach(function (duck) {
             /* 300点状態にする */
             duck.dataset.duckStage = "second";
 
-            /* 消す */
+            /* 300点用の画像に変更 */
+            duck.src = "アヒル300.png";
+
+            /* 一旦消す */
             duck.style.display = "none";
 
             /* 1秒後に復活 */
