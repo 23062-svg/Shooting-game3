@@ -1173,8 +1173,8 @@ const chicken =
         "ニワトリ.png",
         500,
         100,
-        500,
-        300
+        430,
+        200
     );
 
 function moveChicken() {
