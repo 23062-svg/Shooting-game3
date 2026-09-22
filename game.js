@@ -1714,7 +1714,7 @@ function startGakkiTarget() {
     }
 
     // 5～25秒の間でランダムに出現
-    const randomTime = 3000;
+    const randomTime = 5000 + Math.random() * 20000;
 
     gakkiTimer = setTimeout(function () {
 
