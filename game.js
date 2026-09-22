@@ -708,7 +708,7 @@ const rex1 = addTarget(
     "レックス500.png",
     500,
     230,
-    270
+    200
 );
 
 const rex2 = addTarget(
@@ -716,7 +716,7 @@ const rex2 = addTarget(
     "レックス500.png",
     500,
     370,
-    270
+    200
 );
 
 const rex3 = addTarget(
@@ -724,7 +724,7 @@ const rex3 = addTarget(
     "レックス500.png",
     500,
     510,
-    270
+    200
 );
 
 const rex4 = addTarget(
@@ -732,7 +732,7 @@ const rex4 = addTarget(
     "レックス500.png",
     500,
     650,
-    270
+    200
 );
 
 
@@ -816,9 +816,9 @@ const purple =
         "purple-targets",
         "bullseye.png",
         400,
-        890,
-        320,
-        240
+        650,
+        200,
+        200
     );
 
 
@@ -938,32 +938,32 @@ addTarget(
     "red-targets",
     "ハム100.png",
     100,
-    750,
-    400
+    410,
+    250
 );
 
 addTarget(
     "red-targets",
     "ハム100.png",
     100,
-    920,
-    400
+    560,
+    250
 );
 
 addTarget(
     "red-targets",
     "ハム100.png",
     100,
-    1090,
-    400
+    610,
+    250
 );
 
 addTarget(
     "red-targets",
     "ハム100.png",
     100,
-    1260,
-    400
+    760,
+    250
 );
 
 
@@ -977,40 +977,40 @@ const yellowTargets = [
         "yellow-targets",
         "アヒル100.png",
         100,
-        700,
-        480
+        310,
+        250
     ),
 
     addTarget(
         "yellow-targets",
         "アヒル100.png",
         100,
-        820,
-        480
+        420,
+        250
     ),
 
     addTarget(
         "yellow-targets",
         "アヒル100.png",
         100,
-        940,
-        480
+        530,
+        250
     ),
 
     addTarget(
         "yellow-targets",
         "アヒル100.png",
         100,
-        1060,
-        480
+        640,
+        250
     ),
 
     addTarget(
         "yellow-targets",
         "アヒル100.png",
         100,
-        1180,
-        480
+        750,
+        250
     )
 
 ].filter(Boolean);
@@ -1021,7 +1021,7 @@ let yellowDirection = 1;
 const yellowSpeed = 0.4;
 
 const waterLeft = 500;
-const waterRight = 1430;
+const waterRight = 1000;
 
 
 function moveYellowTargets() {
@@ -1103,40 +1103,40 @@ const greenTargets = [
         "green-targets",
         "アヒル100.png",
         100,
-        700,
-        550
+        300,
+        400
     ),
 
     addTarget(
         "green-targets",
         "アヒル100.png",
         100,
-        820,
-        550
+        410,
+        400
     ),
 
     addTarget(
         "green-targets",
         "アヒル100.png",
         100,
-        940,
-        550
+        520,
+        400
     ),
 
     addTarget(
         "green-targets",
         "アヒル100.png",
         100,
-        1060,
-        550
+        630,
+        400
     ),
 
     addTarget(
         "green-targets",
         "アヒル100.png",
         100,
-        1180,
-        550
+        740,
+        400
     )
 
 ].filter(Boolean);
@@ -1224,27 +1224,27 @@ addTarget(
     "orange-targets",
     "reccoon.png",
     300,
+    250,
+    430,
+    200
+);
+
+addTarget(
+    "orange-targets",
+    "reccoon.png",
+    300,
     450,
-    670,
-    350
+    430,
+    200
 );
 
 addTarget(
     "orange-targets",
     "reccoon.png",
     300,
-    750,
-    670,
-    350
-);
-
-addTarget(
-    "orange-targets",
-    "reccoon.png",
-    300,
-    1050,
-    670,
-    350
+    650,
+    430,
+    200
 );
 
 
@@ -1290,7 +1290,7 @@ const chicken =
         "ニワトリ.png",
         500,
         -150,
-        700,
+        500,
         190
     );
 

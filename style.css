@@ -251,7 +251,8 @@ h1 {
     z-index: 0;
 }
 .game-frame {
-    z-index: 90;
+    position: absolute;
+    z-index: 175;
     pointer-events: none;
 }
 
