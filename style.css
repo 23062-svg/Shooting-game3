@@ -676,3 +676,16 @@ h1 {
 #sparrow-targets img {
     pointer-events: auto;
 }
+#gakki-targets {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1024px;
+    height: 661px;
+    z-index: 23;
+    pointer-events: none;
+}
+
+#gakki-targets img {
+    pointer-events: auto;
+}
