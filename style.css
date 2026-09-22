@@ -76,11 +76,11 @@ h1 {
 .water2         { z-index: 15; }
 .grass-front    { z-index: 16; }
 .soil-front     { z-index: 17; }
-.grass-front-most { z-index: 18; }
-.soil-front-most { z-index: 19; }
+.grass-front-most { z-index: 24; }
+.soil-front-most { z-index: 25; }
 #chicken-targets {
     position: absolute;
-    z-index: 18;
+    z-index: 23;
 }
 .fence          { z-index: 20; }
 
@@ -115,7 +115,7 @@ h1 {
 }
 #green-targets {
     position: absolute;
-    z-index: 21;
+    z-index: 14;
 }
 
 #orange-targets {
@@ -187,19 +187,19 @@ h1 {
 
     z-index: 9999;
 
-    font-size: 120px;
+    font-size: 60px;
     font-weight: bold;
 
-    padding: 50px 150px;
+    padding: 20px 65px;
 
-    border-radius: 30px;
-    border: 8px solid white;
+    border-radius: 25px;
+    border: 6px solid white;
 
     cursor: pointer;
 
     pointer-events: auto;
 
-    margin: 0;
+    margin-top: 450px;
 }
 
 /* =========================

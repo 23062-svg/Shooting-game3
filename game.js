@@ -862,7 +862,7 @@ const duck2 = addTarget(
     "yellow-targets",
     "アヒル100.png",
     300,
-    600,
+    610,
     350
 );
 
@@ -870,7 +870,7 @@ const duck3 = addTarget(
     "yellow-targets",
     "アヒル100.png",
     300,
-    680,
+    700,
     350
 );
 
@@ -878,7 +878,7 @@ const duck4 = addTarget(
     "yellow-targets",
     "アヒル100.png",
     300,
-    760,
+    790,
     350
 );
 
@@ -886,7 +886,7 @@ const duck5 = addTarget(
     "yellow-targets",
     "アヒル100.png",
     300,
-    840,
+    880,
     350
 );
 
@@ -1031,7 +1031,7 @@ let yellowDirection = 1;
 const yellowSpeed = 0.4;
 
 const waterLeft = 500;
-const waterRight = 1000;
+const waterRight = 1050;
 
 function moveYellowTargets() {
 
@@ -1130,7 +1130,7 @@ const greenTargets = [
         "green-targets",
         "アヒル100.png",
         100,
-        600,
+        610,
         400
     ),
 
@@ -1138,7 +1138,7 @@ const greenTargets = [
         "green-targets",
         "アヒル100.png",
         100,
-        680,
+        700,
         400
     ),
 
@@ -1146,7 +1146,7 @@ const greenTargets = [
         "green-targets",
         "アヒル100.png",
         100,
-        760,
+        790,
         400
     ),
 
@@ -1154,7 +1154,7 @@ const greenTargets = [
         "green-targets",
         "アヒル100.png",
         100,
-        840,
+        880,
         400
     )
 
@@ -1414,8 +1414,17 @@ addTarget(
     "bird-targets",
     "ことり.png",
     1000,
+    240,
+    120,
+    100
+);
+
+addTarget(
+    "bird-targets",
+    "ことり.png",
+    1000,
     300,
-    130,
+    90,
     100
 );
 
@@ -1424,16 +1433,7 @@ addTarget(
     "ことり.png",
     1000,
     360,
-    100,
-    100
-);
-
-addTarget(
-    "bird-targets",
-    "ことり.png",
-    1000,
-    420,
-    130,
+    120,
     100
 );
 
@@ -1619,7 +1619,7 @@ const sparrow1 = addTarget(
     "sparrow.png",
     500,
     200,
-    80,
+    70,
     120
 );
 
@@ -1628,7 +1628,7 @@ const sparrow2 = addTarget(
     "sparrow.png",
     500,
     130,
-    130,
+    100,
     120
 );
 
@@ -1729,9 +1729,9 @@ function startGakkiTarget() {
             "gakki-targets",
             "gakki.png",
             5000,
-            700,
-            200,
-            170
+            650,
+            160,
+            160
         );
 
         if (!gakki) {
