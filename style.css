@@ -301,6 +301,7 @@ h1 {
 .shooting-target {
     transform-origin: center bottom;
     transition: transform 0.35s ease-in;
+    pointer-events: auto;
 }
 
 /* 的が後ろに倒れた状態 */
@@ -663,4 +664,15 @@ h1 {
     height: 661px;
     z-index: 155;
     pointer-events: none;
+}
+/* =========================
+   新しく追加した的をクリック可能にする
+========================= */
+
+#rabbit-targets img,
+#cat-targets img,
+#goat-targets img,
+#rexer-targets img,
+#sparrow-targets img {
+    pointer-events: auto;
 }

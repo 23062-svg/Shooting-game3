@@ -1109,6 +1109,11 @@ moveYellowTargets();
 
 /* =========================================================
    🟢 緑のアヒル
+   1回目 → 100点
+   ↓
+   300点のアヒルに変化
+   ↓
+   2回目以降 → 300点
 ========================================================= */
 
 const greenTargets = [
@@ -1155,60 +1160,211 @@ const greenTargets = [
 
 ].filter(Boolean);
 
+
+/* =========================================================
+   緑のアヒル専用処理
+========================================================= */
+
+greenTargets.forEach(function (duck) {
+
+    duck.dataset.duckStage = "first";
+
+    duck.shootTarget = function (player) {
+
+        if (duck.style.display === "none") {
+            return;
+        }
+
+        /* -------------------------
+           練習モード
+        ------------------------- */
+
+        if (practiceMode) {
+
+            createInk(
+                duck,
+                window.currentShotX,
+                window.currentShotY,
+                player
+            );
+
+            return;
+        }
+
+        /* -------------------------
+           本番前・ゲーム終了後
+        ------------------------- */
+
+        if (!gameStarted || gameOver) {
+            return;
+        }
+
+
+        /* =========================
+           1回目
+           → 100点
+           → 300点アヒルに変化
+        ========================= */
+
+        if (duck.dataset.duckStage === "first") {
+
+            if (player === "left") {
+                leftScore += 100;
+            }
+
+            if (player === "right") {
+                rightScore += 100;
+            }
+
+            updateScores();
+
+            /* 300点状態に変更 */
+            duck.dataset.duckStage = "second";
+
+            duck.src = "アヒル300.png";
+
+            /* 一度消す */
+            duck.style.display = "none";
+
+            /* 1秒後に復活 */
+            setTimeout(function () {
+
+                if (gameStarted && !gameOver) {
+                    duck.style.display = "block";
+                }
+
+            }, 1000);
+
+            return;
+        }
+
+
+        /* =========================
+           2回目以降
+           → 300点
+           → 倒れる
+           → 5秒後復活
+        ========================= */
+
+        if (duck.dataset.duckStage === "second") {
+
+            if (player === "left") {
+                leftScore += 300;
+            }
+
+            if (player === "right") {
+                rightScore += 300;
+            }
+
+            updateScores();
+
+            duck.classList.add("fall-back");
+
+            setTimeout(function () {
+
+                duck.style.display = "none";
+
+                duck.classList.remove("fall-back");
+
+            }, 600);
+
+
+            /* 5秒後に復活 */
+
+            setTimeout(function () {
+
+                if (gameStarted && !gameOver) {
+                    duck.style.display = "block";
+                }
+
+            }, 5000);
+
+        }
+
+    };
+
+});
+
+
+/* =========================================================
+   緑のアヒル移動
+========================================================= */
+
 let greenDirection = 1;
 
 const greenSpeed = 0.6;
 
+
 function moveGreenTargets() {
 
-    greenTargets.forEach(
-        function (target) {
+    greenTargets.forEach(function (target) {
 
-            let currentX =
-                parseFloat(
-                    target.style.left
-                );
-
-            currentX +=
-                greenSpeed *
-                greenDirection;
-
-            target.style.left =
-                currentX + "px";
-
+        if (
+            !target ||
+            target.style.display === "none"
+        ) {
+            return;
         }
-    );
 
-    if (
-        greenTargets.length === 0
-    ) {
+        let currentX =
+            parseFloat(target.style.left);
+
+        currentX +=
+            greenSpeed *
+            greenDirection;
+
+        target.style.left =
+            currentX + "px";
+
+    });
+
+
+    if (greenTargets.length === 0) {
         return;
     }
 
-    const leftEdge =
-        parseFloat(
-            greenTargets[0].style.left
-        );
 
-    const lastTarget =
-        greenTargets[
-            greenTargets.length - 1
-        ];
+    const visibleTargets =
+        greenTargets.filter(function (target) {
 
-    const rightEdge =
-        parseFloat(
-            lastTarget.style.left
-        ) +
-        lastTarget.offsetWidth;
+            return (
+                target &&
+                target.style.display !== "none"
+            );
 
-    if (
-        leftEdge <= waterLeft ||
-        rightEdge >= waterRight
-    ) {
+        });
 
-        greenDirection *= -1;
+
+    if (visibleTargets.length > 0) {
+
+        const leftEdge =
+            parseFloat(
+                visibleTargets[0].style.left
+            );
+
+        const lastTarget =
+            visibleTargets[
+                visibleTargets.length - 1
+            ];
+
+        const rightEdge =
+            parseFloat(
+                lastTarget.style.left
+            ) +
+            lastTarget.offsetWidth;
+
+
+        if (
+            leftEdge <= waterLeft ||
+            rightEdge >= waterRight
+        ) {
+
+            greenDirection *= -1;
+
+        }
 
     }
+
 
     requestAnimationFrame(
         moveGreenTargets
@@ -1217,6 +1373,7 @@ function moveGreenTargets() {
 }
 
 moveGreenTargets();
+
 
 /* =========================================================
    🟠 アライグマ 300点
@@ -1421,59 +1578,6 @@ const goat =
         100
     );
 
-let goatStep = 0;
-
-function moveGoat() {
-
-    if (!goat) {
-        return;
-    }
-
-    goatStep++;
-
-    const goatX =
-        120 + goatStep * 80;
-
-    const goatY =
-        500 - goatStep * 45;
-
-    goat.style.transition =
-        "left 1.2s ease-in-out, top 1.2s ease-in-out";
-
-    goat.style.left =
-        goatX + "px";
-
-    goat.style.top =
-        goatY + "px";
-
-    if (goatStep >= 7) {
-
-        goatStep = 0;
-
-        setTimeout(
-            function () {
-
-                goat.style.transition =
-                    "none";
-
-                goat.style.left =
-                    "120px";
-
-                goat.style.top =
-                    "500px";
-
-            },
-            1200
-        );
-    }
-}
-
-setInterval(
-    moveGoat,
-    1200
-);
-
-
 /* =========================
    レクサー ×3
 ========================= */
@@ -1507,7 +1611,7 @@ const rexer3 = addTarget(
     
 /* =========================
    🐦 スズメ ×2
-   ニワトリと同じ動き
+   右 → 左へゆっくり飛ぶ
 ========================= */
 
 const sparrow1 = addTarget(
@@ -1534,82 +1638,64 @@ const sparrowTargets = [
 ].filter(Boolean);
 
 
-/* =========================================================
-   スズメをニワトリと同じように飛ばす
-========================================================= */
+/* =========================
+   スズメの移動
+========================= */
 
-function moveSparrows() {
+function moveSparrow(sparrow, delay) {
 
-    sparrowTargets.forEach(
-        function (sparrow) {
+    if (!sparrow) return;
 
-            if (!sparrow) {
-                return;
-            }
+    // 右側の画面外からスタート
+    sparrow.style.transition = "none";
+    sparrow.style.left = "1024px";
 
-            /* 左端に戻す */
-
-            sparrow.style.transition =
-                "none";
-
-            sparrow.style.left =
-                "-150px";
-
-        }
-    );
-
-
-    /* 少し待ってから右へ飛ぶ */
-
-    setTimeout(
-        function () {
-
-            if (!gameOver) {
-
-                sparrowTargets.forEach(
-                    function (sparrow) {
-
-                        if (!sparrow) {
-                            return;
-                        }
-
-                        sparrow.style.transition =
-                            "left 7s linear";
-
-                        sparrow.style.left =
-                            "991px";
-
-                    }
-                );
-
-            }
-
-        },
-        50
-    );
-
-}
-
-
-/* 最初の飛行 */
-
-moveSparrows();
-
-
-/* 7秒ごとに繰り返す */
-
-setInterval(
-    function () {
+    setTimeout(function () {
 
         if (!gameOver) {
 
-            moveSparrows();
+            // 12秒かけて右 → 左
+            sparrow.style.transition =
+                "left 12s linear";
 
+            sparrow.style.left =
+                "-150px";
         }
 
-    },
-    7000
-);
+    }, delay);
+}
+
+
+/* =========================
+   最初の飛行
+========================= */
+
+// 1匹目
+moveSparrow(sparrow1, 0);
+
+// 3秒後に2匹目
+moveSparrow(sparrow2, 3000);
+
+
+/* =========================
+   繰り返し
+========================= */
+
+setInterval(function () {
+
+    if (!gameOver) {
+
+        // 1匹目
+        moveSparrow(sparrow1, 0);
+
+        // 3秒後に2匹目
+        moveSparrow(sparrow2, 3000);
+
+    }
+
+}, 13000);
+
+        
 
 /* =========================================================
    Joy-Con接続
