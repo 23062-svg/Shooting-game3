@@ -676,17 +676,22 @@ h1 {
 #sparrow-targets img {
     pointer-events: auto;
 }
+
+
+#grass-front-most {
+    z-index: 18;
+}
+
 #gakki-targets {
     position: absolute;
     left: 0;
     top: 0;
     width: 1024px;
     height: 661px;
-    z-index: 8;
+    z-index: 19;
     pointer-events: none;
 }
 
-#gakki-targets img {
+#gakki-targets .shooting-target {
     pointer-events: auto;
 }
-

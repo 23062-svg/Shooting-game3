@@ -1729,9 +1729,9 @@ function startGakkiTarget() {
             "gakki-targets",
             "がっき.png",
             5000,
-            500,
-            250,
-            150
+            700,
+            600,
+            170
         );
 
         if (!gakki) {
