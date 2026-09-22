@@ -63,51 +63,174 @@ h1 {
     pointer-events: none;
 }
 
-/* 奥 → 手前 */
-.mountain       { z-index: 1; }
-.soil           { z-index: 2; }
-.field-soil     { z-index: 4; }
-.field-soil2    { z-index: 5; }
-.house          { z-index: 7; }
-.grass          { z-index: 9; }
-.soil-middle    { z-index: 11; }
-.tree           { z-index: 12; }
+/* =========================
+   背景・的のレイヤー
+   奥 → 手前
+========================= */
+
+.sky-background {
+    z-index: 0;
+}
+
+/* 山 */
+.mountain {
+    z-index: 10;
+}
+
+/* 🐐 やぎ：山の手前 */
+#goat-targets {
+    z-index: 15;
+}
+
+/* 土 */
+.soil {
+    z-index: 20;
+}
+
+/* 青いレックス */
+#blue-targets {
+    z-index: 25;
+}
+
+/* 畑 */
+.field-soil {
+    z-index: 30;
+}
+
+.field-soil2 {
+    z-index: 40;
+}
+
+/* 家 */
+.house {
+    z-index: 50;
+}
+
+/* 🐱 猫：家の手前 */
+#cat-targets {
+    z-index: 55;
+}
+
+/* 紫 */
+#purple-targets {
+    z-index: 58;
+}
+
+/* 草 */
+.grass {
+    z-index: 60;
+}
+
+/* 🦖 レクサー：草の手前 */
+#rexer-targets {
+    z-index: 65;
+}
+
+/* 赤 */
+#red-targets {
+    z-index: 70;
+}
+
+/* 土の真ん中 */
+.soil-middle {
+    z-index: 80;
+}
+
+/* 木 */
+.tree {
+    z-index: 90;
+}
+
+/* ことり */
 #bird-targets {
-    position: absolute;
-    z-index: 13;
+    z-index: 95;
 }
-.water          { z-index: 14; }
-.water2         { z-index: 15; }
-.grass-front    { z-index: 16; }
-.soil-front     { z-index: 17; }
-.grass-front-most { z-index: 18; }
-.soil-front-most { z-index: 19; }
+
+/* 水 */
+.water {
+    z-index: 100;
+}
+
+.water2 {
+    z-index: 110;
+}
+
+/* 黄色 */
+#yellow-targets {
+    z-index: 115;
+}
+
+/* 草・土の手前 */
+.grass-front {
+    z-index: 120;
+}
+
+.soil-front {
+    z-index: 130;
+}
+
+/* 緑 */
+#green-targets {
+    z-index: 135;
+}
+
+/* オレンジ */
+#orange-targets {
+    z-index: 136;
+}
+
+/* 草最前 */
+.grass-front-most {
+    z-index: 140;
+}
+
+/* 🐰 うさぎ：土最前の後ろ */
+#rabbit-targets {
+    z-index: 145;
+}
+
+/* 土最前 */
+.soil-front-most {
+    z-index: 150;
+}
+
+/* 🐦 スズメ：土最前の手前 */
+#sparrow-targets {
+    z-index: 155;
+}
+
+/* ニワトリ */
 #chicken-targets {
-    position: absolute;
-    z-index: 18;
+    z-index: 160;
 }
-.fence          { z-index: 20; }
+
+/* 柵 */
+.fence {
+    z-index: 170;
+}
+
+/* 照準 */
+.player-cursor {
+    z-index: 9999;
+}
 
 /* 的を入れる場所 */
 #blue-targets {
     position: absolute;
-    z-index: 3;
 }
 
 #purple-targets {
     position: absolute;
-    z-index: 8;
 }
 
 #red-targets {
     position: absolute;
-    z-index: 10;
 }
 
 #yellow-targets {
     position: absolute;
-    z-index: 13;
 }
+
 
 /* 照準 */
 #crosshair {
@@ -119,12 +242,10 @@ h1 {
 }
 #green-targets {
     position: absolute;
-    z-index: 21;
 }
 
 #orange-targets {
     position: absolute;
-    z-index: 22;
 }
 .sky-background {
     z-index: 0;
@@ -589,5 +710,28 @@ h1 {
     z-index: 9999;
 
     opacity: 0.8;
+
+}
+/* =========================================================
+   🐰 うさぎが跳ねる
+========================================================= */
+
+.rabbit-jump {
+    animation: rabbitJump 0.6s ease-in-out;
+}
+
+@keyframes rabbitJump {
+
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-80px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
 
 }

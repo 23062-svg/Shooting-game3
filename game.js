@@ -1385,6 +1385,259 @@ function updateGamepads() {
     let leftPad = null;
     let rightPad = null;
 
+/* =========================================================
+   🐰 うさぎ 300点
+   レックスのように跳ねながら横移動
+========================================================= */
+
+const rabbit =
+    addTarget(
+        "rabbit-targets",
+        "うさぎ.png",
+        300,
+        250,
+        250,
+        170
+    );
+
+
+let rabbitDirection = 1;
+let rabbitSteps = 0;
+
+
+function moveRabbit() {
+
+    if (!rabbit) {
+        return;
+    }
+
+    const currentX =
+        parseFloat(rabbit.style.left);
+
+    rabbit.style.transition =
+        "left 1.5s ease-in-out";
+
+    rabbit.style.left =
+        (
+            currentX +
+            120 * rabbitDirection
+        ) + "px";
+
+
+    /* 跳ねる */
+
+    rabbit.classList.remove(
+        "rabbit-jump"
+    );
+
+    void rabbit.offsetWidth;
+
+    rabbit.classList.add(
+        "rabbit-jump"
+    );
+
+
+    rabbitSteps++;
+
+    if (rabbitSteps >= 1) {
+
+        rabbitDirection *= -1;
+        rabbitSteps = 0;
+
+    }
+
+}
+
+
+/* 1.5秒ごとに移動 */
+
+setInterval(
+    moveRabbit,
+    1500
+);
+
+
+/* =========================================================
+   🐱 猫 400点
+   固定
+========================================================= */
+
+addTarget(
+    "cat-targets",
+    "ねこ.png",
+    400,
+    900,
+    230,
+    180
+);
+
+
+/* =========================================================
+   🐐 やぎ 600点
+   山を登るように移動
+========================================================= */
+
+const goat =
+    addTarget(
+        "goat-targets",
+        "やぎ.png",
+        600,
+        350,
+        650,
+        180
+    );
+
+
+let goatStep = 0;
+
+
+function moveGoat() {
+
+    if (!goat) {
+        return;
+    }
+
+    goatStep++;
+
+    /*
+       山を登っていく
+       左下 → 右上
+    */
+
+    const goatX =
+        350 + goatStep * 70;
+
+    const goatY =
+        650 - goatStep * 45;
+
+
+    goat.style.transition =
+        "left 1.2s ease-in-out, top 1.2s ease-in-out";
+
+    goat.style.left =
+        goatX + "px";
+
+    goat.style.top =
+        goatY + "px";
+
+
+    /* 右上まで行ったら最初に戻る */
+
+    if (goatStep >= 7) {
+
+        goatStep = 0;
+
+        setTimeout(
+            function () {
+
+                goat.style.transition =
+                    "none";
+
+                goat.style.left =
+                    "350px";
+
+                goat.style.top =
+                    "650px";
+
+            },
+            1200
+        );
+
+    }
+
+}
+
+
+setInterval(
+    moveGoat,
+    1200
+);
+
+
+/* =========================================================
+   🦖 レクサー 500点
+   固定
+========================================================= */
+
+addTarget(
+    "rexer-targets",
+    "レクサー.png",
+    500,
+    1100,
+    180,
+    200
+);
+
+
+/* =========================================================
+   🐦 スズメ 500点
+   空を飛ぶように横移動
+========================================================= */
+
+const sparrow =
+    addTarget(
+        "sparrow-targets",
+        "スズメ.png",
+        500,
+        300,
+        100,
+        120
+    );
+
+
+let sparrowDirection = 1;
+
+
+function moveSparrow() {
+
+    if (!sparrow) {
+        return;
+    }
+
+
+    const currentX =
+        parseFloat(
+            sparrow.style.left
+        );
+
+
+    sparrow.style.transition =
+        "left 3s ease-in-out";
+
+
+    sparrow.style.left =
+        (
+            currentX +
+            300 * sparrowDirection
+        ) + "px";
+
+
+    /* 端まで行ったら反対方向 */
+
+    if (
+        currentX >= 1000
+    ) {
+
+        sparrowDirection = -1;
+
+    }
+
+
+    if (
+        currentX <= 200
+    ) {
+
+        sparrowDirection = 1;
+
+    }
+
+}
+
+
+setInterval(
+    moveSparrow,
+    3000
+);
 
     /* -----------------------------------------
        接続されているJoy-Conを2台取得
