@@ -2379,15 +2379,17 @@ practiceText.style.display = "block";
                                         gameOver =
                                             false;
 
+                                        /* 5000点のがっきを開始 */
+                                        startGakkiTarget();
+
                                         /* 得点リセット */
 
                                         leftScore =
                                             0;
 
                                         rightScore =
-                                            0;
-
-                                        updateScores();
+                                            0; 
+                                                                                                    updateScores();
 
                                         /* タイマー開始 */
 
