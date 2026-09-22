@@ -606,3 +606,61 @@ h1 {
     }
 
 }
+/* =========================================================
+   🐰🐱🐐🦖🐦 新しく追加した的
+========================================================= */
+
+/* うさぎ：土最前より後ろ */
+#rabbit-targets {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1024px;
+    height: 661px;
+    z-index: 145;
+    pointer-events: none;
+}
+
+/* ねこ：家より前 */
+#cat-targets {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1024px;
+    height: 661px;
+    z-index: 55;
+    pointer-events: none;
+}
+
+/* やぎ：山より前 */
+#goat-targets {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1024px;
+    height: 661px;
+    z-index: 15;
+    pointer-events: none;
+}
+
+/* レクサー：草より前 */
+#rexer-targets {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1024px;
+    height: 661px;
+    z-index: 65;
+    pointer-events: none;
+}
+
+/* スズメ：土最前より前 */
+#sparrow-targets {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1024px;
+    height: 661px;
+    z-index: 155;
+    pointer-events: none;
+}
