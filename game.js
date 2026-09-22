@@ -1,3 +1,5 @@
+const hitSound = new Audio("pon.mp3");
+
 /* =========================================================
    2人プレイ・シューティングゲーム
    マウス + Joy-Con 2台
@@ -170,6 +172,11 @@ function addTarget(
         ) {
             return;
         }
+
+    // 🔊 的を撃った音
+    const shootSound = new Audio("shoot.mp3");
+    shootSound.currentTime = 0;
+    shootSound.play();
 
 
         /* -------------------------
