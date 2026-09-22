@@ -1140,7 +1140,7 @@ addTarget(
     "bird-targets",
     "ことり.png",
     1000,
-    340,
+    370,
     160,
     100
 );
@@ -1149,7 +1149,7 @@ addTarget(
     "bird-targets",
     "ことり.png",
     1000,
-    400,
+    430,
     130,
     100
 );
@@ -1158,7 +1158,7 @@ addTarget(
     "bird-targets",
     "ことり.png",
     1000,
-    460,
+    490,
     160,
     100
 );
@@ -1173,8 +1173,8 @@ const chicken =
         "ニワトリ.png",
         500,
         100,
-        430,
-        200
+        420,
+        190
     );
 
 function moveChicken() {
@@ -1336,7 +1336,7 @@ addTarget(
     "cat-targets",
     "ねこ.png",
     400,
-    900,
+    400,
     230,
     180
 );
@@ -1426,8 +1426,8 @@ addTarget(
     "rexer-targets",
     "レクサー.png",
     500,
-    1100,
-    180,
+    300,
+    400,
     200
 );
 
