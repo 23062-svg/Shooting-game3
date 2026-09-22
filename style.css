@@ -1,98 +1,142 @@
+/* =========================================================
+   基本設定
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
 html,
 body {
+    margin: 0;
+    padding: 0;
+
     width: 100%;
     height: 100%;
-    margin: 0;
-    padding: 0;
-    background: black;
+
     overflow: hidden;
+
+    background: #000;
+
+    font-family:
+        Arial,
+        "Helvetica Neue",
+        sans-serif;
 }
 
-body {
-    text-align: center;
-}
 
-/* =========================
-   ゲーム画面
-   MacBookの画面いっぱいに表示
-========================= */
+/* =========================================================
+   ゲーム本体
+   1024 × 661
+========================================================= */
 
 #game {
-    position: absolute;
 
-    left: 0;
-    top: 0;
+    position: relative;
 
     width: 1024px;
     height: 661px;
-
-    margin: 0;
-    padding: 0;
 
     overflow: hidden;
 
-    transform-origin: top left;
+    margin: 0 auto;
+
+    transform-origin: center center;
+
+    background: #8fdcff;
 }
 
 
-/* =========================
-   画面上の文字
-========================= */
+/* =========================================================
+   基本レイヤー
+========================================================= */
 
-h1 {
-    margin: 10px 0 5px;
-    color: white;
-}
-
-#score {
-    color: white;
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-
-
-
-/* 板を重ねるための基本設定 */
 .board {
+
     position: absolute;
+
     left: 0;
     top: 0;
+
     width: 1024px;
     height: 661px;
+
+    max-width: none;
+
+    user-select: none;
+
     pointer-events: none;
+
+    object-fit: fill;
 }
 
-/* =========================
-   背景・的のレイヤー
-   奥 → 手前
-========================= */
+
+/* =========================================================
+   背景
+========================================================= */
 
 .sky-background {
     z-index: 0;
 }
 
-/* 山 */
 .mountain {
     z-index: 10;
 }
 
-/* 🐐 やぎ：山の手前 */
+
+/* =========================================================
+   やぎ
+========================================================= */
+
 #goat-targets {
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 1024px;
+    height: 661px;
+
     z-index: 15;
+
+    pointer-events: none;
 }
 
-/* 土 */
+
+/* =========================================================
+   土
+========================================================= */
+
 .soil {
     z-index: 20;
 }
 
-/* 青いレックス */
+
+/* =========================================================
+   青い的
+========================================================= */
+
 #blue-targets {
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 1024px;
+    height: 661px;
+
     z-index: 25;
+
+    pointer-events: none;
 }
 
-/* 畑 */
+
+/* =========================================================
+   畑
+========================================================= */
+
 .field-soil {
     z-index: 30;
 }
@@ -101,52 +145,142 @@ h1 {
     z-index: 40;
 }
 
-/* 家 */
+
+/* =========================================================
+   家
+========================================================= */
+
 .house {
     z-index: 50;
 }
 
-/* 🐱 猫：家の手前 */
+
+/* =========================================================
+   猫
+========================================================= */
+
 #cat-targets {
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 1024px;
+    height: 661px;
+
     z-index: 55;
+
+    pointer-events: none;
 }
 
-/* 紫 */
+
+/* =========================================================
+   ブルズアイ
+========================================================= */
+
 #purple-targets {
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 1024px;
+    height: 661px;
+
     z-index: 58;
+
+    pointer-events: none;
 }
 
-/* 草 */
+
+/* =========================================================
+   草
+========================================================= */
+
 .grass {
     z-index: 60;
 }
 
-/* 🦖 レクサー：草の手前 */
+
+/* =========================================================
+   レクサー
+========================================================= */
+
 #rexer-targets {
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 1024px;
+    height: 661px;
+
     z-index: 65;
+
+    pointer-events: none;
 }
 
-/* 赤 */
+
+/* =========================================================
+   赤い的
+========================================================= */
+
 #red-targets {
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 1024px;
+    height: 661px;
+
     z-index: 70;
+
+    pointer-events: none;
 }
 
-/* 土の真ん中 */
+
+/* =========================================================
+   土・木
+========================================================= */
+
 .soil-middle {
     z-index: 80;
 }
 
-/* 木 */
 .tree {
     z-index: 90;
 }
 
-/* ことり */
+
+/* =========================================================
+   ことり
+========================================================= */
+
 #bird-targets {
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 1024px;
+    height: 661px;
+
     z-index: 95;
+
+    pointer-events: none;
 }
 
-/* 水 */
+
+/* =========================================================
+   水
+========================================================= */
+
 .water {
     z-index: 100;
 }
@@ -155,12 +289,31 @@ h1 {
     z-index: 110;
 }
 
-/* 黄色 */
+
+/* =========================================================
+   黄色い的
+========================================================= */
+
 #yellow-targets {
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 1024px;
+    height: 661px;
+
     z-index: 115;
+
+    pointer-events: none;
 }
 
-/* 草・土の手前 */
+
+/* =========================================================
+   手前の草
+========================================================= */
+
 .grass-front {
     z-index: 120;
 }
@@ -169,170 +322,344 @@ h1 {
     z-index: 130;
 }
 
-/* 緑 */
+
+/* =========================================================
+   緑の的
+========================================================= */
+
 #green-targets {
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 1024px;
+    height: 661px;
+
     z-index: 135;
+
+    pointer-events: none;
 }
 
-/* オレンジ */
+
+/* =========================================================
+   オレンジの的
+========================================================= */
+
 #orange-targets {
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 1024px;
+    height: 661px;
+
     z-index: 136;
+
+    pointer-events: none;
 }
 
-/* 草最前 */
+
+/* =========================================================
+   一番手前の草
+========================================================= */
+
 .grass-front-most {
     z-index: 140;
 }
 
-/* 🐰 うさぎ：土最前の後ろ */
+
+/* =========================================================
+   うさぎ
+========================================================= */
+
 #rabbit-targets {
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 1024px;
+    height: 661px;
+
     z-index: 145;
+
+    pointer-events: none;
 }
 
-/* 土最前 */
+
+/* =========================================================
+   一番手前の土
+========================================================= */
+
 .soil-front-most {
     z-index: 150;
 }
 
-/* 🐦 スズメ：土最前の手前 */
+
+/* =========================================================
+   スズメ
+========================================================= */
+
 #sparrow-targets {
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 1024px;
+    height: 661px;
+
     z-index: 155;
+
+    pointer-events: none;
 }
 
-/* ニワトリ */
+
+/* =========================================================
+   チキン
+========================================================= */
+
 #chicken-targets {
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 1024px;
+    height: 661px;
+
     z-index: 160;
+
+    pointer-events: none;
 }
 
-/* 柵 */
+
+/* =========================================================
+   柵
+========================================================= */
+
 .fence {
     z-index: 170;
 }
 
-/* 照準 */
-.player-cursor {
-    z-index: 9999;
+
+/* =========================================================
+   的
+========================================================= */
+
+.shooting-target {
+
+    position: absolute;
+
+    display: block;
+
+    user-select: none;
+
+    pointer-events: auto;
+
+    cursor: crosshair;
+
+    object-fit: contain;
+
+    transform-origin: center bottom;
+
+    transition:
+        transform 0.35s ease-in;
+
 }
 
-/* 的を入れる場所 */
-#blue-targets {
-    position: absolute;
-}
 
-#purple-targets {
-    position: absolute;
-}
+/* =========================================================
+   うさぎジャンプ
+========================================================= */
 
-#red-targets {
-    position: absolute;
-}
+.rabbit-jump {
 
-#yellow-targets {
-    position: absolute;
+    animation:
+        rabbitJump
+        0.6s
+        ease-in-out;
+
 }
 
 
-/* 照準 */
-#crosshair {
-    position: absolute;
-    z-index: 100;
-    color: white;
-    font-size: 50px;
-    pointer-events: none;
-}
-#green-targets {
-    position: absolute;
+@keyframes rabbitJump {
+
+    0% {
+        transform:
+            translateY(0);
+    }
+
+    50% {
+        transform:
+            translateY(-80px);
+    }
+
+    100% {
+        transform:
+            translateY(0);
+    }
+
 }
 
-#orange-targets {
-    position: absolute;
-}
-.sky-background {
-    z-index: 0;
-}
+
+/* =========================================================
+   フレーム
+========================================================= */
+
 .game-frame {
+
     position: absolute;
-    z-index: 175;
-    pointer-events: none;
-}
 
-.player-cursor {
-    position: absolute;
-    font-size: 35px;
-    width: 45px;
-    height: 45px;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-}
-
-.left-cursor {
-    color: blue;
-}
-
-.right-cursor {
-    color: red;
-}
-#timer {
-    color: white;
-    font-size: 28px;
-    margin-bottom: 10px;
-}
-/* =========================
-   スタート画面
-========================= */
-/* =========================
-   スタート画面
-========================= */
-
-#start-screen {
-    position: absolute;
     left: 0;
     top: 0;
 
     width: 1024px;
     height: 661px;
 
-    background-image: url("start-background.jpeg");
-    background-size: cover;
-    background-position: center;
+    z-index: 1000;
 
-    z-index: 200;
+    pointer-events: none;
 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    pointer-events: auto;
 }
 
-/* STARTボタン */
-#start-button {
-    position: relative;
+
+/* =========================================================
+   プレイヤーカーソル
+========================================================= */
+
+.player-cursor {
+
+    position: absolute;
+
+    pointer-events: none;
 
     z-index: 9999;
 
-    font-size: 120px;
-    font-weight: bold;
+    user-select: none;
 
-    padding: 50px 150px;
+    font-size: 50px;
+
+    line-height: 1;
+
+}
+
+
+/* =========================================================
+   スタート画面
+========================================================= */
+
+#start-screen {
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 1024px;
+    height: 661px;
+
+    z-index: 2000;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    background:
+        linear-gradient(
+            #75d8ff,
+            #b8edff
+        );
+
+}
+
+
+/* =========================================================
+   スタートタイトル
+========================================================= */
+
+.start-title {
+
+    margin-bottom: 45px;
+
+    font-size: 64px;
+
+    font-weight: 900;
+
+    color: white;
+
+    text-align: center;
+
+    text-shadow:
+        4px 4px 0 #347ca0,
+        7px 7px 0 rgba(0,0,0,0.15);
+
+}
+
+
+/* =========================================================
+   STARTボタン
+========================================================= */
+
+#start-button {
+
+    min-width: 280px;
+
+    padding:
+        22px 50px;
+
+    border: none;
 
     border-radius: 30px;
-    border: 8px solid white;
+
+    background: #fff3b0;
+
+    color: #8b5a25;
+
+    font-size: 38px;
+
+    font-weight: 900;
 
     cursor: pointer;
 
-    pointer-events: auto;
+    box-shadow:
+        0 8px 0 #c99f55;
 
-    margin: 0;
+    transition:
+        transform 0.1s,
+        box-shadow 0.1s;
+
 }
 
-/* =========================
+
+#start-button:active {
+
+    transform:
+        translateY(6px);
+
+    box-shadow:
+        0 2px 0 #c99f55;
+
+}
+
+
+/* =========================================================
    カウントダウン
-========================= */
+========================================================= */
 
 #countdown {
+
     position: absolute;
 
     left: 0;
@@ -341,398 +668,374 @@ h1 {
     width: 1024px;
     height: 661px;
 
+    z-index: 2100;
+
     display: none;
 
-    justify-content: center;
     align-items: center;
+
+    justify-content: center;
 
     color: white;
 
     font-size: 180px;
-    font-weight: bold;
 
-    z-index: 190;
+    font-weight: 900;
+
+    text-shadow:
+        8px 8px 0 rgba(0,0,0,0.35);
 
     pointer-events: none;
+
 }
 
 
-/* =========================
-   幕
-========================= */
+/* =========================================================
+   スコア
+========================================================= */
 
-/* 幕が開いた状態 */
-/* =========================
-   上下の幕
-========================= */
+#score-board {
 
-#curtain-top,
-#curtain-bottom {
     position: absolute;
+
     left: 0;
+    top: 0;
 
     width: 1024px;
-    height: 50%;
 
-    background: #b22222;
+    z-index: 1800;
 
-    z-index: 180;
+    display: flex;
 
-    transition: transform 0.35s ease-in-out;
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding:
+        12px 25px;
 
     pointer-events: none;
+
 }
 
-/* 上の幕 */
-#curtain-top {
-    top: 0;
-    transform: translateY(0);
+
+#left-score,
+#right-score {
+
+    min-width: 190px;
+
+    padding:
+        10px 18px;
+
+    border-radius: 16px;
+
+    background: rgba(
+        255,
+        248,
+        220,
+        0.95
+    );
+
+    color: #333;
+
+    font-size: 30px;
+
+    font-weight: 900;
+
+    text-align: center;
+
 }
 
-/* 下の幕 */
-#curtain-bottom {
-    bottom: 0;
-    transform: translateY(0);
+
+#timer {
+
+    padding:
+        10px 24px;
+
+    border-radius: 18px;
+
+    background: rgba(
+        255,
+        248,
+        220,
+        0.95
+    );
+
+    color: #333;
+
+    font-size: 30px;
+
+    font-weight: 900;
+
 }
 
-/* =========================
-   スタート時
-   → 幕が開く
-========================= */
 
-#game.curtain-open #curtain-top {
-    transform: translateY(-100%);
-}
-
-#game.curtain-open #curtain-bottom {
-    transform: translateY(100%);
-}
-
-/* =========================
-   ゲーム終了時
-   → 幕が閉じる
-========================= */
-
-#game.curtain-close #curtain-top {
-    transform: translateY(0);
-}
-
-#game.curtain-close #curtain-bottom {
-    transform: translateY(0);
-}
-
-/* =========================
-   的が後ろに倒れるエフェクト
-========================= */
-
-.shooting-target {
-    transform-origin: center bottom;
-    transition: transform 0.35s ease-in;
-}
-
-/* 的が後ろに倒れた状態 */
-.shooting-target.fall-back {
-    transform: perspective(400px) rotateX(-75deg) translateY(15px);
-    opacity: 0.7;
-}
-/* レックスが1歩進むときのジャンプ */
-.rex-jump {
-    animation: rexJump 0.5s ease-out;
-}
-
-@keyframes rexJump {
-    0% {
-        transform: translateY(0);
-    }
-
-    40% {
-        transform: translateY(-15px);
-    }
-
-    70% {
-        transform: translateY(-15px);
-    }
-
-    100% {
-        transform: translateY(0);
-    }
-}
-/* =========================
-   試し撃ち用の的
-========================= */
+/* =========================================================
+   練習モード
+========================================================= */
 
 #practice-targets {
+
     position: absolute;
+
     left: 0;
     top: 0;
+
     width: 1024px;
     height: 661px;
 
     z-index: 210;
 
     pointer-events: none;
-}
 
-#practice-targets img {
-    pointer-events: auto;
-}
-/* =========================
-   ゲーム終了時の幕
-========================= */
-
-#game.curtain-close #curtain-top {
-    transform: translateY(0);
-}
-
-#game.curtain-close #curtain-bottom {
-    transform: translateY(0);
-}
-
-
-/* =========================
-   最終得点
-========================= */
-/* =========================
-   最終結果画面
-========================= */
-
-#final-score {
-    position:absolute;
-    left:0;
-    top:0;
-    width:1024px;
-    height:661px;
-    z-index:300;
-
-    display:flex;
-    flex-direction:row;
-    justify-content:space-around;
-
-    /* ← 点数全体を上にする */
-    align-items:flex-start;
-
-    pointer-events:none;
-
-    background-image:url("背景最後.png");
-    background-size:cover;
-    background-position:center;
-
-    font-family:Arial,sans-serif;
-    font-weight:bold;
-    text-align:center;
-}
-
-/* 左の点数 */
-.final-left {
-    width:45%;
-    font-size:100px;
-    text-align:center;
-
-    /* ← 上からの位置 */
-    margin-top:110px;
-
-    /* 青 */
-    color:blue;
-
-    text-shadow:4px 4px 8px rgba(0,0,0,.7);
-}
-
-/* 右の点数 */
-.final-right {
-    width:45%;
-    font-size:100px;
-    text-align:center;
-
-    /* ← 上からの位置 */
-    margin-top:110px;
-
-    /* 赤 */
-    color:red;
-
-    text-shadow:4px 4px 8px rgba(0,0,0,.7);
-}
-
-
-/*=========================
-   結果表示中
-========================= */
-
-#game.curtain-close #final-score {
-    display: flex;
-}
-/* =========================
-   残り5秒カウントダウン
-========================= */
-
-#game-countdown {
-    position: absolute;
-    left: 0;
-    top: 0;
-
-    width: 1024px;
-    height: 661px;
-
-    display: none;
-
-    justify-content: center;
-    align-items: center;
-
-    color: white;
-
-    font-size: 220px;
-
-    font-weight: bold;
-
-    opacity: 0.5;
-
-    z-index: 250;
-
-    pointer-events: none;
-
-    text-shadow:
-        3px 3px 8px rgba(0, 0, 0, 0.8);
-}
-/* =========================
-   最終画面・左右から来る幕
-========================= */
-
-#final-curtain {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 1024px;
-    height: 661px;
-
-    z-index: 290;
-
-    pointer-events: none;
     overflow: hidden;
+
 }
 
-/* 左側 */
-.final-curtain-left {
-    position: absolute;
-
-    left: -50%;
-    top: 0;
-
-    width: 50%;
-    height: 100%;
-
-    object-fit: cover;
-
-    transition: left 0.8s ease-in-out;
-}
-
-/* 右側 */
-.final-curtain-right {
-    position: absolute;
-
-    right: -50%;
-    top: 0;
-
-    width: 50%;
-    height: 100%;
-
-    object-fit: cover;
-
-    transform: scaleX(-1);
-
-    transition: right 0.8s ease-in-out;
-}
-
-/* 左右から中央へ */
-#final-curtain.open .final-curtain-left {
-    left: 0;
-}
-
-#final-curtain.open .final-curtain-right {
-    right: 0;
-}
-/* =========================
-   練習中の文字
-========================= */
 
 #practice-text {
+
     position: absolute;
 
-    left: 0;
-    top: 35px;
+    left: 50%;
 
-    width: 1024px;
+    top: 80px;
 
-    text-align: center;
-
-    color: white;
-
-    font-size: 65px;
-    font-weight: bold;
+    transform:
+        translateX(-50%);
 
     z-index: 220;
 
-    pointer-events: none;
+    color: white;
+
+    font-size: 55px;
+
+    font-weight: 900;
 
     text-shadow:
-        4px 4px 0px #000,
-        -2px -2px 0px #000,
-        2px -2px 0px #000,
-        -2px 2px 0px #000;
+        5px 5px 0 rgba(0,0,0,0.35);
+
+    pointer-events: none;
+
 }
+
+
 /* =========================================================
-   練習モード・インク
+   練習インク
 ========================================================= */
 
 .practice-ink {
 
     position: absolute;
 
+    width: 70px;
+
+    height: 70px;
+
     border-radius: 50%;
 
-    pointer-events: none;
-
-    z-index: 9999;
+    transform:
+        translate(-50%, -50%);
 
     opacity: 0.85;
 
+    pointer-events: none;
+
     box-shadow:
-        0 0 8px rgba(255,255,255,0.25);
+        0 0 10px rgba(
+            0,
+            0,
+            0,
+            0.25
+        );
 
 }
 
 
-.practice-ink-splat {
+/* =========================================================
+   照準
+========================================================= */
+
+#crosshair {
 
     position: absolute;
 
-    border-radius: 50%;
+    left: 50%;
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    z-index: 9998;
+
+    color: white;
+
+    font-size: 45px;
+
+    font-weight: 900;
+
+    text-shadow:
+        2px 2px 0 #000,
+        -2px -2px 0 #000;
 
     pointer-events: none;
 
-    z-index: 9999;
-
-    opacity: 0.8;
-
 }
+
+
 /* =========================================================
-   🐰 うさぎが跳ねる
+   最終結果カーテン
 ========================================================= */
 
-.rabbit-jump {
-    animation: rabbitJump 0.6s ease-in-out;
+#final-curtain {
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 1024px;
+    height: 661px;
+
+    z-index: 2900;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            90deg,
+            #6fc8ff 0%,
+            #9edfff 50%,
+            #ffb0b0 50%,
+            #ff7373 100%
+        );
+
 }
 
-@keyframes rabbitJump {
 
-    0% {
-        transform: translateY(0);
-    }
+.final-title {
 
-    50% {
-        transform: translateY(-80px);
-    }
+    font-size: 100px;
 
-    100% {
-        transform: translateY(0);
-    }
+    color: white;
+
+    font-weight: 900;
+
+    text-shadow:
+        7px 7px 0 rgba(0,0,0,0.3);
+
+}
+
+
+/* =========================================================
+   最終スコア
+========================================================= */
+
+#final-score {
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 1024px;
+    height: 661px;
+
+    z-index: 3000;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    pointer-events: none;
+
+}
+
+
+.result-box {
+
+    display: flex;
+
+    gap: 45px;
+
+    padding:
+        35px 45px;
+
+    border-radius: 30px;
+
+    background:
+        rgba(
+            255,
+            245,
+            215,
+            0.98
+        );
+
+}
+
+
+.result-left,
+.result-right {
+
+    min-width: 300px;
+
+    text-align: center;
+
+    padding:
+        20px 30px;
+
+    border-radius: 25px;
+
+}
+
+
+.result-left {
+
+    background:
+        #8fd7ff;
+
+}
+
+
+.result-right {
+
+    background:
+        #ff9999;
+
+}
+
+
+.result-label {
+
+    font-size: 38px;
+
+    font-weight: 900;
+
+    color: white;
+
+    text-shadow:
+        3px 3px 0 rgba(0,0,0,0.25);
+
+}
+
+
+.result-number {
+
+    margin-top: 10px;
+
+    font-size: 90px;
+
+    font-weight: 900;
+
+    color: white;
+
+    text-shadow:
+        5px 5px 0 rgba(0,0,0,0.25);
 
 }
