@@ -116,7 +116,7 @@ function addTarget(
     points,
     x,
     y,
-    size = 150
+    size = 90
 ) {
 
     const container =
@@ -2059,9 +2059,9 @@ const practiceTarget1 =
         "practice-targets",
         "練習的.png",
         0,
-        -100,
+        -200,
         170,
-        1000
+        700
     );
 
 
@@ -2070,9 +2070,9 @@ const practiceTarget2 =
         "practice-targets",
         "練習的.png",
         0,
-        550,
+        300,
         170,
-        1000
+        700
     );
 
 
