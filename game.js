@@ -116,7 +116,7 @@ function addTarget(
     points,
     x,
     y,
-    size = 90
+    size = 120
 ) {
 
     const container =
@@ -818,7 +818,7 @@ const purple =
         400,
         650,
         200,
-        200
+        150
     );
 
 
@@ -938,32 +938,32 @@ addTarget(
     "red-targets",
     "ハム100.png",
     100,
-    410,
-    250
+    550,
+    300
 );
 
 addTarget(
     "red-targets",
     "ハム100.png",
     100,
-    560,
-    250
+    660,
+    300
 );
 
 addTarget(
     "red-targets",
     "ハム100.png",
     100,
-    610,
-    250
+    780,
+    300
 );
 
 addTarget(
     "red-targets",
     "ハム100.png",
     100,
-    760,
-    250
+    900,
+    300
 );
 
 
@@ -977,40 +977,40 @@ const yellowTargets = [
         "yellow-targets",
         "アヒル100.png",
         100,
-        310,
-        250
+        520,
+        350
     ),
 
     addTarget(
         "yellow-targets",
         "アヒル100.png",
         100,
-        420,
-        250
+        600,
+        350
     ),
 
     addTarget(
         "yellow-targets",
         "アヒル100.png",
         100,
-        530,
-        250
+        680,
+        350
     ),
 
     addTarget(
         "yellow-targets",
         "アヒル100.png",
         100,
-        640,
-        250
+        760,
+        350
     ),
 
     addTarget(
         "yellow-targets",
         "アヒル100.png",
         100,
-        750,
-        250
+        840,
+        350
     )
 
 ].filter(Boolean);
@@ -1103,22 +1103,6 @@ const greenTargets = [
         "green-targets",
         "アヒル100.png",
         100,
-        300,
-        400
-    ),
-
-    addTarget(
-        "green-targets",
-        "アヒル100.png",
-        100,
-        410,
-        400
-    ),
-
-    addTarget(
-        "green-targets",
-        "アヒル100.png",
-        100,
         520,
         400
     ),
@@ -1127,7 +1111,7 @@ const greenTargets = [
         "green-targets",
         "アヒル100.png",
         100,
-        630,
+        600,
         400
     ),
 
@@ -1135,7 +1119,23 @@ const greenTargets = [
         "green-targets",
         "アヒル100.png",
         100,
-        740,
+        680,
+        400
+    ),
+
+    addTarget(
+        "green-targets",
+        "アヒル100.png",
+        100,
+        760,
+        400
+    ),
+
+    addTarget(
+        "green-targets",
+        "アヒル100.png",
+        100,
+        840,
         400
     )
 
@@ -1225,8 +1225,8 @@ addTarget(
     "reccoon.png",
     300,
     250,
-    430,
-    200
+    460,
+    250
 );
 
 addTarget(
@@ -1234,8 +1234,8 @@ addTarget(
     "reccoon.png",
     300,
     450,
-    430,
-    200
+    460,
+    250
 );
 
 addTarget(
@@ -1243,8 +1243,8 @@ addTarget(
     "reccoon.png",
     300,
     650,
-    430,
-    200
+    460,
+    250
 );
 
 
@@ -1289,9 +1289,9 @@ const chicken =
         "chicken-targets",
         "ニワトリ.png",
         500,
-        -150,
+        100,
         500,
-        190
+        300
     );
 
 
@@ -2059,8 +2059,8 @@ const practiceTarget1 =
         "practice-targets",
         "練習的.png",
         0,
-        -200,
-        170,
+        -80,
+        130,
         700
     );
 
@@ -2070,8 +2070,8 @@ const practiceTarget2 =
         "practice-targets",
         "練習的.png",
         0,
-        300,
-        170,
+        380,
+        130,
         700
     );
 
