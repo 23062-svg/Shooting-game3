@@ -173,13 +173,11 @@ function addTarget(
             return;
         }
 
-    // 🔊 的を撃った音
-    const shootSound = new Audio("shoot.mp3");
-    shootSound.currentTime = 0;
-    shootSound.play();
+    hitSound.currentTime = 0;
+    hitSound.play();
 
 
-        /* -------------------------
+ /* -------------------------
    練習モード
 ------------------------- */
 
