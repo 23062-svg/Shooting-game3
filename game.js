@@ -1220,68 +1220,59 @@ setInterval(
     },
     7000
 );
-/* =========================================================
-   🐰 うさぎ 300点
-   レックスのように跳ねながら横移動
-========================================================= */
+/* =========================
+   うさぎ ×2
+========================= */
 
-const rabbit =
-    addTarget(
-        "rabbit-targets",
-        "うさぎ.png",
-        300,
-        180,
-        250,
-        170
-    );
+const rabbit1 = addTarget(
+    "rabbit-targets",
+    "うさぎ.png",
+    300,
+    180,
+    250,
+    140
+);
+
+const rabbit2 = addTarget(
+    "rabbit-targets",
+    "うさぎ.png",
+    300,
+    300,
+    250,
+    140
+);
+
+const rabbitTargets = [rabbit1, rabbit2].filter(Boolean);
 
 let rabbitDirection = 1;
+let rabbitSteps = 0;
 
-function moveRabbit() {
+setInterval(function () {
 
-    if (!rabbit) {
-        return;
+    rabbitTargets.forEach(function (rabbit) {
+
+        const currentX = parseFloat(rabbit.style.left);
+
+        rabbit.style.transition = "left 2s ease-in-out";
+
+        rabbit.style.left =
+            (currentX + 10 * rabbitDirection) + "px";
+
+        rabbit.classList.remove("rabbit-jump");
+
+        void rabbit.offsetWidth;
+
+        rabbit.classList.add("rabbit-jump");
+    });
+
+    rabbitSteps++;
+
+    if (rabbitSteps >= 3) {
+        rabbitDirection *= -1;
+        rabbitSteps = 0;
     }
 
-    let currentX =
-        parseFloat(rabbit.style.left);
-
-    currentX +=
-        120 * rabbitDirection;
-
-    /* 1024pxの画面内に収める */
-
-    if (currentX >= 700) {
-        rabbitDirection = -1;
-    }
-
-    if (currentX <= 100) {
-        rabbitDirection = 1;
-    }
-
-    rabbit.style.transition =
-        "left 1.5s ease-in-out";
-
-    rabbit.style.left =
-        currentX + "px";
-
-    /* ジャンプ */
-
-    rabbit.classList.remove(
-        "rabbit-jump"
-    );
-
-    void rabbit.offsetWidth;
-
-    rabbit.classList.add(
-        "rabbit-jump"
-    );
-}
-
-setInterval(
-    moveRabbit,
-    1500
-);
+}, 2000);
 
 
 /* =========================================================
@@ -1293,8 +1284,8 @@ addTarget(
     "ねこ.png",
     400,
     780,
-    230,
-    180
+    200,
+    100
 );
 
 
@@ -1310,7 +1301,7 @@ const goat =
         600,
         120,
         500,
-        150
+        100
     );
 
 let goatStep = 0;
@@ -1366,70 +1357,85 @@ setInterval(
 );
 
 
-/* =========================================================
-   🦖 レクサー 500点
-========================================================= */
+/* =========================
+   レクサー ×3
+========================= */
 
-addTarget(
+const rexer1 = addTarget(
     "rexer-targets",
     "レクサー.png",
     500,
-    780,
-    150,
-    180
+    200,
+    250,
+    130
 );
 
-
-/* =========================================================
-   🐦 スズメ 500点
-   空を飛ぶように横移動
-========================================================= */
-
-const sparrow =
-    addTarget(
-        "sparrow-targets",
-        "スズメ.png",
-        500,
-        250,
-        80,
-        120
-    );
-
-let sparrowDirection = 1;
-
-function moveSparrow() {
-
-    if (!sparrow) {
-        return;
-    }
-
-    let currentX =
-        parseFloat(
-            sparrow.style.left
-        );
-
-    currentX +=
-        250 * sparrowDirection;
-
-    if (currentX >= 750) {
-        sparrowDirection = -1;
-    }
-
-    if (currentX <= 100) {
-        sparrowDirection = 1;
-    }
-
-    sparrow.style.transition =
-        "left 3s ease-in-out";
-
-    sparrow.style.left =
-        currentX + "px";
-}
-
-setInterval(
-    moveSparrow,
-    3000
+const rexer2 = addTarget(
+    "rexer-targets",
+    "レクサー.png",
+    500,
+    350,
+    250,
+    130
 );
+
+const rexer3 = addTarget(
+    "rexer-targets",
+    "レクサー.png",
+    500,
+    500,
+    250,
+    130
+);
+
+/* =========================
+   スズメ ×2
+   ニワトリと同じ動き
+========================= */
+
+const sparrow1 = addTarget(
+    "sparrow-targets",
+    "スズメ.png",
+    500,
+    250,
+    80,
+    120
+);
+
+const sparrow2 = addTarget(
+    "sparrow-targets",
+    "スズメ.png",
+    500,
+    500,
+    130,
+    120
+);
+
+const sparrowTargets = [sparrow1, sparrow2].filter(Boolean);
+
+/* ニワトリと同じ動き */
+let sparrowStartX = -150;
+let sparrowEndX = 991;
+let sparrowDuration = 7000;
+
+sparrowTargets.forEach(function (sparrow, index) {
+
+    if (!sparrow) return;
+
+    sparrow.style.left = sparrowStartX + "px";
+
+    setTimeout(function () {
+
+        sparrow.style.transition =
+            "left " + sparrowDuration + "ms linear";
+
+        sparrow.style.left =
+            sparrowEndX + "px";
+
+    }, index * 500);
+
+});
+
 
 /* =========================================================
    Joy-Con接続
