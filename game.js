@@ -1766,33 +1766,29 @@ window.addEventListener(
     }
 );
 
-/* =========================================================
-   Joy-Con操作
-   2台認識・1台認識の両方に対応
-========================================================= */
-
 function updateGamepads() {
     const pads = navigator.getGamepads();
 
     // =========================
-    // プレイヤー1 = Gamepad index 0
-    // プレイヤー2 = Gamepad index 1
+    // Joy-Conを取得
     // =========================
 
-    const leftPad = pads[0];
-    const rightPad = pads[1];
+    let joyCon0 = pads[0];
+    let joyCon1 = pads[1];
 
     // =========================
     // 🩷 PLAYER 1
+    // index 0
     // =========================
-    if (leftPad && leftPad.connected) {
 
-        const x = Math.abs(leftPad.axes[0]) > 0.15
-            ? leftPad.axes[0]
+    if (joyCon0 && joyCon0.connected) {
+
+        const x = Math.abs(joyCon0.axes[0]) > 0.15
+            ? joyCon0.axes[0]
             : 0;
 
-        const y = Math.abs(leftPad.axes[1]) > 0.15
-            ? leftPad.axes[1]
+        const y = Math.abs(joyCon0.axes[1]) > 0.15
+            ? joyCon0.axes[1]
             : 0;
 
         leftX += x * cursorSpeed;
@@ -1804,11 +1800,10 @@ function updateGamepads() {
         leftCursor.style.left = leftX + "px";
         leftCursor.style.top = leftY + "px";
 
-        // 発射
         let pressed = false;
 
-        for (let i = 0; i < leftPad.buttons.length; i++) {
-            if (leftPad.buttons[i].pressed) {
+        for (let i = 0; i < joyCon0.buttons.length; i++) {
+            if (joyCon0.buttons[i].pressed) {
                 pressed = true;
                 break;
             }
@@ -1824,15 +1819,23 @@ function updateGamepads() {
 
     // =========================
     // 🩵 PLAYER 2
+    // index 1
     // =========================
-    if (rightPad && rightPad.connected) {
 
-        const x = Math.abs(rightPad.axes[0]) > 0.15
-            ? rightPad.axes[0]
+    if (joyCon1 && joyCon1.connected) {
+
+        /*
+         * Joy-Con L+Rの場合
+         * 左スティック = axes 0,1
+         * 右スティック = axes 2,3
+         */
+
+        const x = Math.abs(joyCon1.axes[2]) > 0.15
+            ? joyCon1.axes[2]
             : 0;
 
-        const y = Math.abs(rightPad.axes[1]) > 0.15
-            ? rightPad.axes[1]
+        const y = Math.abs(joyCon1.axes[3]) > 0.15
+            ? joyCon1.axes[3]
             : 0;
 
         rightX += x * cursorSpeed;
@@ -1844,11 +1847,10 @@ function updateGamepads() {
         rightCursor.style.left = rightX + "px";
         rightCursor.style.top = rightY + "px";
 
-        // 発射
         let pressed = false;
 
-        for (let i = 0; i < rightPad.buttons.length; i++) {
-            if (rightPad.buttons[i].pressed) {
+        for (let i = 0; i < joyCon1.buttons.length; i++) {
+            if (joyCon1.buttons[i].pressed) {
                 pressed = true;
                 break;
             }
@@ -1864,21 +1866,10 @@ function updateGamepads() {
     requestAnimationFrame(updateGamepads);
 }
 
-updateGamepads();     
-
-        
+updateGamepads();
 
 
 
-
-
-    
-
-
-    
-/*==============================
-   30秒タイマー
-========================================================= */
 
 function startGameTimer() {
 
