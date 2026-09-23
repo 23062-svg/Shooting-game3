@@ -1,3 +1,4 @@
+
 const hitSound = new Audio("pon.mp3");
 
 /* =========================================================
@@ -1771,398 +1772,111 @@ window.addEventListener(
 ========================================================= */
 
 function updateGamepads() {
+    const pads = navigator.getGamepads();
 
-    const pads =
-        Array.from(navigator.getGamepads())
-        .filter(function (pad) {
+    // =========================
+    // プレイヤー1 = Gamepad index 0
+    // プレイヤー2 = Gamepad index 1
+    // =========================
 
-            return pad &&
-                   pad.connected;
+    const leftPad = pads[0];
+    const rightPad = pads[1];
 
-        });
+    // =========================
+    // 🩷 PLAYER 1
+    // =========================
+    if (leftPad && leftPad.connected) {
 
-    let leftPad = null;
-    let rightPad = null;
+        const x = Math.abs(leftPad.axes[0]) > 0.15
+            ? leftPad.axes[0]
+            : 0;
 
-    /* =====================================================
-       Joy-Conが2台別々に認識されている場合
-    ===================================================== */
+        const y = Math.abs(leftPad.axes[1]) > 0.15
+            ? leftPad.axes[1]
+            : 0;
 
-    if (pads.length >= 2) {
+        leftX += x * cursorSpeed;
+        leftY += y * cursorSpeed;
 
-        leftPad = pads[0];
-        rightPad = pads[1];
+        leftX = Math.max(0, Math.min(1024, leftX));
+        leftY = Math.max(0, Math.min(661, leftY));
 
-    }
+        leftCursor.style.left = leftX + "px";
+        leftCursor.style.top = leftY + "px";
 
-    /* =====================================================
-       Joy-Conが1つのGamepadとして認識されている場合
-       左 = axes 0,1
-       右 = axes 2,3
-    ===================================================== */
+        // 発射
+        let pressed = false;
 
-    const combinedPad =
-        pads.length === 1 &&
-        pads[0].axes.length >= 4
-            ? pads[0]
-            : null;
-
-
-    /* =====================================================
-       左プレイヤー
-    ===================================================== */
-
-    if (leftPad) {
-
-        const axisX =
-            Math.abs(leftPad.axes[0]) > 0.15
-                ? leftPad.axes[0]
-                : 0;
-
-        const axisY =
-            Math.abs(leftPad.axes[1]) > 0.15
-                ? leftPad.axes[1]
-                : 0;
-
-        leftX +=
-            axisX * cursorSpeed;
-
-        leftY +=
-            axisY * cursorSpeed;
-
-        leftX =
-            Math.max(
-                0,
-                Math.min(1024, leftX)
-            );
-
-        leftY =
-            Math.max(
-                0,
-                Math.min(661, leftY)
-            );
-
-        leftCursor.style.left =
-            leftX + "px";
-
-        leftCursor.style.top =
-            leftY + "px";
-
-
-        let leftPressed = false;
-
-        for (
-            let i = 0;
-            i < leftPad.buttons.length;
-            i++
-        ) {
-
-            if (
-                leftPad.buttons[i] &&
-                leftPad.buttons[i].pressed
-            ) {
-
-                leftPressed = true;
+        for (let i = 0; i < leftPad.buttons.length; i++) {
+            if (leftPad.buttons[i].pressed) {
+                pressed = true;
                 break;
-
             }
-
         }
 
-
-        if (
-            leftPressed &&
-            !leftFirePressed
-        ) {
-
-            console.log(
-                "PLAYER 1 FIRE",
-                leftX,
-                leftY
-            );
-
-            shootAt(
-                leftX,
-                leftY,
-                "left"
-            );
-
+        if (pressed && !leftFirePressed) {
+            shootAt(leftX, leftY, "left");
         }
 
-        leftFirePressed =
-            leftPressed;
-
+        leftFirePressed = pressed;
     }
 
 
-    /* =====================================================
-       右プレイヤー
-    ===================================================== */
+    // =========================
+    // 🩵 PLAYER 2
+    // =========================
+    if (rightPad && rightPad.connected) {
 
-    if (rightPad) {
+        const x = Math.abs(rightPad.axes[0]) > 0.15
+            ? rightPad.axes[0]
+            : 0;
 
-        const axisX =
-            Math.abs(rightPad.axes[0]) > 0.15
-                ? rightPad.axes[0]
-                : 0;
+        const y = Math.abs(rightPad.axes[1]) > 0.15
+            ? rightPad.axes[1]
+            : 0;
 
-        const axisY =
-            Math.abs(rightPad.axes[1]) > 0.15
-                ? rightPad.axes[1]
-                : 0;
+        rightX += x * cursorSpeed;
+        rightY += y * cursorSpeed;
 
-        rightX +=
-            axisX * cursorSpeed;
+        rightX = Math.max(0, Math.min(1024, rightX));
+        rightY = Math.max(0, Math.min(661, rightY));
 
-        rightY +=
-            axisY * cursorSpeed;
+        rightCursor.style.left = rightX + "px";
+        rightCursor.style.top = rightY + "px";
 
-        rightX =
-            Math.max(
-                0,
-                Math.min(1024, rightX)
-            );
+        // 発射
+        let pressed = false;
 
-        rightY =
-            Math.max(
-                0,
-                Math.min(661, rightY)
-            );
-
-        rightCursor.style.left =
-            rightX + "px";
-
-        rightCursor.style.top =
-            rightY + "px";
-
-
-        let rightPressed = false;
-
-        for (
-            let i = 0;
-            i < rightPad.buttons.length;
-            i++
-        ) {
-
-            if (
-                rightPad.buttons[i] &&
-                rightPad.buttons[i].pressed
-            ) {
-
-                rightPressed = true;
+        for (let i = 0; i < rightPad.buttons.length; i++) {
+            if (rightPad.buttons[i].pressed) {
+                pressed = true;
                 break;
-
             }
-
         }
 
-
-        if (
-            rightPressed &&
-            !rightFirePressed
-        ) {
-
-            console.log(
-                "PLAYER 2 FIRE",
-                rightX,
-                rightY
-            );
-
-            shootAt(
-                rightX,
-                rightY,
-                "right"
-            );
-
+        if (pressed && !rightFirePressed) {
+            shootAt(rightX, rightY, "right");
         }
 
-        rightFirePressed =
-            rightPressed;
-
+        rightFirePressed = pressed;
     }
 
-
-    /* =====================================================
-       1つのGamepadに左右両方が入っている場合
-    ===================================================== */
-
-    if (combinedPad) {
-
-        /* -------------------------
-           PLAYER 1
-        ------------------------- */
-
-        const leftAxisX =
-            Math.abs(combinedPad.axes[0]) > 0.15
-                ? combinedPad.axes[0]
-                : 0;
-
-        const leftAxisY =
-            Math.abs(combinedPad.axes[1]) > 0.15
-                ? combinedPad.axes[1]
-                : 0;
-
-        leftX +=
-            leftAxisX * cursorSpeed;
-
-        leftY +=
-            leftAxisY * cursorSpeed;
-
-        leftX =
-            Math.max(
-                0,
-                Math.min(1024, leftX)
-            );
-
-        leftY =
-            Math.max(
-                0,
-                Math.min(661, leftY)
-            );
-
-        leftCursor.style.left =
-            leftX + "px";
-
-        leftCursor.style.top =
-            leftY + "px";
-
-
-        /* -------------------------
-           PLAYER 2
-           axes 2,3
-        ------------------------- */
-
-        const rightAxisX =
-            Math.abs(combinedPad.axes[2]) > 0.15
-                ? combinedPad.axes[2]
-                : 0;
-
-        const rightAxisY =
-            Math.abs(combinedPad.axes[3]) > 0.15
-                ? combinedPad.axes[3]
-                : 0;
-
-        rightX +=
-            rightAxisX * cursorSpeed;
-
-        rightY +=
-            rightAxisY * cursorSpeed;
-
-        rightX =
-            Math.max(
-                0,
-                Math.min(1024, rightX)
-            );
-
-        rightY =
-            Math.max(
-                0,
-                Math.min(661, rightY)
-            );
-
-        rightCursor.style.left =
-            rightX + "px";
-
-        rightCursor.style.top =
-            rightY + "px";
-
-
-        /* -------------------------
-           ボタン
-        ------------------------- */
-
-        let leftPressed = false;
-        let rightPressed = false;
-
-        for (
-            let i = 0;
-            i < combinedPad.buttons.length;
-            i++
-        ) {
-
-            if (
-                combinedPad.buttons[i] &&
-                combinedPad.buttons[i].pressed
-            ) {
-
-                /*
-                   左右でボタン番号を分ける必要がある場合は
-                   ここを調整できます。
-                */
-
-                if (i <= 7) {
-                    leftPressed = true;
-                }
-
-                if (i >= 8) {
-                    rightPressed = true;
-                }
-
-            }
-
-        }
-
-
-        if (
-            leftPressed &&
-            !leftFirePressed
-        ) {
-
-            console.log(
-                "PLAYER 1 FIRE",
-                leftX,
-                leftY
-            );
-
-            shootAt(
-                leftX,
-                leftY,
-                "left"
-            );
-
-        }
-
-
-        if (
-            rightPressed &&
-            !rightFirePressed
-        ) {
-
-            console.log(
-                "PLAYER 2 FIRE",
-                rightX,
-                rightY
-            );
-
-            shootAt(
-                rightX,
-                rightY,
-                "right"
-            );
-
-        }
-
-
-        leftFirePressed =
-            leftPressed;
-
-        rightFirePressed =
-            rightPressed;
-
-    }
-
-
-    requestAnimationFrame(
-        updateGamepads
-    );
-
+    requestAnimationFrame(updateGamepads);
 }
 
 updateGamepads();     
-                
+
+        
 
 
-/* =========================================================
+
+
+
+    
+
+
+    
+/*==============================
    30秒タイマー
 ========================================================= */
 
@@ -2733,3 +2447,28 @@ updateScores();
 console.log(
     "ゲームプログラム読み込み完了"
 );
+
+function checkGamepads() {
+    const pads = navigator.getGamepads();
+
+    console.clear();
+
+    for (const pad of pads) {
+        if (!pad) continue;
+
+        console.log("===== GAMEPAD =====");
+        console.log("index:", pad.index);
+        console.log("id:", pad.id);
+        console.log("axes:", Array.from(pad.axes));
+        console.log(
+            "buttons:",
+            Array.from(pad.buttons).map((b, i) => ({
+                index: i,
+                pressed: b.pressed,
+                value: b.value
+            }))
+        );
+    }
+}
+
+setInterval(checkGamepads, 1000);
