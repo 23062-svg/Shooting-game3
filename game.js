@@ -1911,33 +1911,24 @@ function startGameTimer() {
                     gameTimer = null;
 
                     gameOver = true;
-                    gameStarted = false;
+gameStarted = false;
 
-                    timerText.textContent =
-                        "Time: 0";
+timerText.textContent =
+    "Time: 0";
 
-                    hideGameCountdown();
+hideGameCountdown();
 
-                    /* 上下の幕を閉める */
+/* =========================
+   上下の幕を閉める
+   ========================= */
 
-                    gameArea.classList.remove(
-                        "curtain-open"
-                    );
+gameArea.classList.remove(
+    "curtain-open"
+);
 
-                    gameArea.classList.add(
-                        "curtain-close"
-                    );
-
-                    /* 0.8秒後に結果 */
-
-                    setTimeout(
-                        function () {
-
-                            showFinalScore();
-
-                        },
-                        800
-                    );
+gameArea.classList.add(
+    "curtain-close"
+);
 
                 }
 
@@ -2292,63 +2283,7 @@ else {
 
 }
 
-/* =========================================================
-   最終得点
-========================================================= */
-
-function showFinalScore() {
-
-    const finalCurtain =
-        document.getElementById(
-            "final-curtain"
-        );
-
-    if (finalCurtain) {
-
-        finalCurtain.classList.add(
-            "open"
-        );
-
-    }
-
-    setTimeout(
-        function () {
-
-            if (
-                document.getElementById(
-                    "final-score"
-                )
-            ) {
-                return;
-            }
-
-            const finalScore =
-                document.createElement(
-                    "div"
-                );
-
-            finalScore.id =
-                "final-score";
-
-            finalScore.innerHTML = `
-                <div class="final-left">
-                    ${leftScore}
-                </div>
-
-                <div class="final-right">
-                    ${rightScore}
-                </div>
-            `;
-
-            gameArea.appendChild(
-                finalScore
-            );
-
-        },
-        900
-    );
-
-}
+    
 
 /* =========================================================
    画面いっぱいに表示
