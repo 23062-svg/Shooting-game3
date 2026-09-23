@@ -74,8 +74,8 @@ leftCursor.className =
 rightCursor.className =
     "player-cursor right-cursor";
 
-leftCursor.textContent = "🩷";
-rightCursor.textContent = "🩵";
+leftCursor.textContent = "+";
+rightCursor.textContent = "+";
 
 gameArea.appendChild(leftCursor);
 gameArea.appendChild(rightCursor);
@@ -1800,14 +1800,8 @@ function updateGamepads() {
         leftCursor.style.left = leftX + "px";
         leftCursor.style.top = leftY + "px";
 
-        let pressed = false;
 
-        for (let i = 0; i < joyCon0.buttons.length; i++) {
-            if (joyCon0.buttons[i].pressed) {
-                pressed = true;
-                break;
-            }
-        }
+        const pressed = !!joyCon0.buttons[13]?.pressed;
 
         if (pressed && !leftFirePressed) {
             shootAt(leftX, leftY, "left");
@@ -1847,14 +1841,7 @@ function updateGamepads() {
         rightCursor.style.left = rightX + "px";
         rightCursor.style.top = rightY + "px";
 
-        let pressed = false;
-
-        for (let i = 0; i < joyCon1.buttons.length; i++) {
-            if (joyCon1.buttons[i].pressed) {
-                pressed = true;
-                break;
-            }
-        }
+        const pressed = !!joyCon1.buttons[3]?.pressed;
 
         if (pressed && !rightFirePressed) {
             shootAt(rightX, rightY, "right");

@@ -132,12 +132,30 @@ h1 {
 
 .player-cursor {
     position: absolute;
-    font-size: 35px;
+    font-size: 45px;
+    font-weight: bold;
     width: 45px;
     height: 45px;
+    line-height: 45px;
+    text-align: center;
     pointer-events: none;
     z-index: 9999;
     transform: translate(-50%, -50%);
+    text-shadow:
+        2px 2px 3px black,
+        -2px -2px 3px black,
+        2px -2px 3px black,
+        -2px 2px 3px black;
+}
+
+/* 🩷 プレイヤー1 */
+.left-cursor {
+    color: #ff69b4;
+}
+
+/* 🩵 プレイヤー2 */
+.right-cursor {
+    color: #55dfff;
 }
 
 .left-cursor {
