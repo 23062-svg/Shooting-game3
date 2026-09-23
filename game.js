@@ -264,13 +264,20 @@ if (practiceMode) {
             const gameRect =
                 gameArea.getBoundingClientRect();
 
-            const clickX =
-                event.clientX -
-                gameRect.left;
+            const scaleX =
+    gameRect.width / 1024;
 
-            const clickY =
-                event.clientY -
-                gameRect.top;
+const scaleY =
+    gameRect.height / 661;
+
+const clickX =
+    (event.clientX - gameRect.left) /
+    scaleX;
+
+const clickY =
+    (event.clientY - gameRect.top) /
+    scaleY;
+
 
             /* 透明部分ならハズレ */
 
@@ -314,14 +321,24 @@ function isVisiblePixel(
     const gameRect =
         gameArea.getBoundingClientRect();
 
-    const targetRect =
-        target.getBoundingClientRect();
+    const scaleX =
+        gameRect.width / 1024;
+
+    const scaleY =
+        gameRect.height / 661;
+
+    /* ゲーム内座標 → 実際の画面座標 */
 
     const screenX =
-        gameRect.left + gameX;
+        gameRect.left +
+        gameX * scaleX;
 
     const screenY =
-        gameRect.top + gameY;
+        gameRect.top +
+        gameY * scaleY;
+
+    const targetRect =
+        target.getBoundingClientRect();
 
     if (
         screenX < targetRect.left ||
@@ -400,6 +417,8 @@ function isVisiblePixel(
     }
 
 }
+    
+        
 
 /* =========================================================
    Joy-Con / 照準が的に当たったか
@@ -1503,7 +1522,7 @@ const rabbit1 = addTarget(
     "ハム100.png",
     300,
     180,
-    350,
+    380,
     140
 );
 
@@ -1512,7 +1531,7 @@ const rabbit2 = addTarget(
     "ハム100.png",
     300,
     300,
-    350,
+    380,
     140
 );
 
@@ -1748,42 +1767,52 @@ window.addEventListener(
 
 /* =========================================================
    Joy-Con操作
+   2台認識・1台認識の両方に対応
 ========================================================= */
 
 function updateGamepads() {
 
-    const pads = navigator.getGamepads();
+    const pads =
+        Array.from(navigator.getGamepads())
+        .filter(function (pad) {
+
+            return pad &&
+                   pad.connected;
+
+        });
 
     let leftPad = null;
     let rightPad = null;
 
+    /* =====================================================
+       Joy-Conが2台別々に認識されている場合
+    ===================================================== */
 
-    /* -----------------------------------------
-       接続されているJoy-Conを2台取得
-    ----------------------------------------- */
+    if (pads.length >= 2) {
 
-    for (const pad of pads) {
-
-        if (!pad) {
-            continue;
-        }
-
-        if (!leftPad) {
-            leftPad = pad;
-        }
-        else if (!rightPad) {
-            rightPad = pad;
-        }
+        leftPad = pads[0];
+        rightPad = pads[1];
 
     }
 
     /* =====================================================
-       左Joy-Con
+       Joy-Conが1つのGamepadとして認識されている場合
+       左 = axes 0,1
+       右 = axes 2,3
+    ===================================================== */
+
+    const combinedPad =
+        pads.length === 1 &&
+        pads[0].axes.length >= 4
+            ? pads[0]
+            : null;
+
+
+    /* =====================================================
+       左プレイヤー
     ===================================================== */
 
     if (leftPad) {
-
-        /* 左Joy-Conのスティック */
 
         const axisX =
             Math.abs(leftPad.axes[0]) > 0.15
@@ -1795,10 +1824,11 @@ function updateGamepads() {
                 ? leftPad.axes[1]
                 : 0;
 
-        leftX += axisX * cursorSpeed;
-        leftY += axisY * cursorSpeed;
+        leftX +=
+            axisX * cursorSpeed;
 
-        /* 画面外に出ないようにする */
+        leftY +=
+            axisY * cursorSpeed;
 
         leftX =
             Math.max(
@@ -1812,18 +1842,12 @@ function updateGamepads() {
                 Math.min(661, leftY)
             );
 
-        /* 照準を移動 */
-
         leftCursor.style.left =
             leftX + "px";
 
         leftCursor.style.top =
             leftY + "px";
 
-        /* -----------------------------------------
-           左Joy-Conのボタン
-           どのボタンでも発射
-        ----------------------------------------- */
 
         let leftPressed = false;
 
@@ -1845,7 +1869,6 @@ function updateGamepads() {
 
         }
 
-        /* 押した瞬間だけ発射 */
 
         if (
             leftPressed &&
@@ -1853,7 +1876,7 @@ function updateGamepads() {
         ) {
 
             console.log(
-                "LEFT FIRE",
+                "PLAYER 1 FIRE",
                 leftX,
                 leftY
             );
@@ -1871,13 +1894,12 @@ function updateGamepads() {
 
     }
 
+
     /* =====================================================
-       右Joy-Con
+       右プレイヤー
     ===================================================== */
 
     if (rightPad) {
-
-        /* 右Joy-Conも axes 0,1 */
 
         const axisX =
             Math.abs(rightPad.axes[0]) > 0.15
@@ -1889,10 +1911,11 @@ function updateGamepads() {
                 ? rightPad.axes[1]
                 : 0;
 
-        rightX += axisX * cursorSpeed;
-        rightY += axisY * cursorSpeed;
+        rightX +=
+            axisX * cursorSpeed;
 
-        /* 画面外に出ないようにする */
+        rightY +=
+            axisY * cursorSpeed;
 
         rightX =
             Math.max(
@@ -1906,18 +1929,12 @@ function updateGamepads() {
                 Math.min(661, rightY)
             );
 
-        /* 照準を移動 */
-
         rightCursor.style.left =
             rightX + "px";
 
         rightCursor.style.top =
             rightY + "px";
 
-        /* -----------------------------------------
-           右Joy-Conのボタン
-           どのボタンでも発射
-        ----------------------------------------- */
 
         let rightPressed = false;
 
@@ -1939,7 +1956,6 @@ function updateGamepads() {
 
         }
 
-        /* 押した瞬間だけ発射 */
 
         if (
             rightPressed &&
@@ -1947,7 +1963,7 @@ function updateGamepads() {
         ) {
 
             console.log(
-                "RIGHT FIRE",
+                "PLAYER 2 FIRE",
                 rightX,
                 rightY
             );
@@ -1965,13 +1981,187 @@ function updateGamepads() {
 
     }
 
+
+    /* =====================================================
+       1つのGamepadに左右両方が入っている場合
+    ===================================================== */
+
+    if (combinedPad) {
+
+        /* -------------------------
+           PLAYER 1
+        ------------------------- */
+
+        const leftAxisX =
+            Math.abs(combinedPad.axes[0]) > 0.15
+                ? combinedPad.axes[0]
+                : 0;
+
+        const leftAxisY =
+            Math.abs(combinedPad.axes[1]) > 0.15
+                ? combinedPad.axes[1]
+                : 0;
+
+        leftX +=
+            leftAxisX * cursorSpeed;
+
+        leftY +=
+            leftAxisY * cursorSpeed;
+
+        leftX =
+            Math.max(
+                0,
+                Math.min(1024, leftX)
+            );
+
+        leftY =
+            Math.max(
+                0,
+                Math.min(661, leftY)
+            );
+
+        leftCursor.style.left =
+            leftX + "px";
+
+        leftCursor.style.top =
+            leftY + "px";
+
+
+        /* -------------------------
+           PLAYER 2
+           axes 2,3
+        ------------------------- */
+
+        const rightAxisX =
+            Math.abs(combinedPad.axes[2]) > 0.15
+                ? combinedPad.axes[2]
+                : 0;
+
+        const rightAxisY =
+            Math.abs(combinedPad.axes[3]) > 0.15
+                ? combinedPad.axes[3]
+                : 0;
+
+        rightX +=
+            rightAxisX * cursorSpeed;
+
+        rightY +=
+            rightAxisY * cursorSpeed;
+
+        rightX =
+            Math.max(
+                0,
+                Math.min(1024, rightX)
+            );
+
+        rightY =
+            Math.max(
+                0,
+                Math.min(661, rightY)
+            );
+
+        rightCursor.style.left =
+            rightX + "px";
+
+        rightCursor.style.top =
+            rightY + "px";
+
+
+        /* -------------------------
+           ボタン
+        ------------------------- */
+
+        let leftPressed = false;
+        let rightPressed = false;
+
+        for (
+            let i = 0;
+            i < combinedPad.buttons.length;
+            i++
+        ) {
+
+            if (
+                combinedPad.buttons[i] &&
+                combinedPad.buttons[i].pressed
+            ) {
+
+                /*
+                   左右でボタン番号を分ける必要がある場合は
+                   ここを調整できます。
+                */
+
+                if (i <= 7) {
+                    leftPressed = true;
+                }
+
+                if (i >= 8) {
+                    rightPressed = true;
+                }
+
+            }
+
+        }
+
+
+        if (
+            leftPressed &&
+            !leftFirePressed
+        ) {
+
+            console.log(
+                "PLAYER 1 FIRE",
+                leftX,
+                leftY
+            );
+
+            shootAt(
+                leftX,
+                leftY,
+                "left"
+            );
+
+        }
+
+
+        if (
+            rightPressed &&
+            !rightFirePressed
+        ) {
+
+            console.log(
+                "PLAYER 2 FIRE",
+                rightX,
+                rightY
+            );
+
+            shootAt(
+                rightX,
+                rightY,
+                "right"
+            );
+
+        }
+
+
+        leftFirePressed =
+            leftPressed;
+
+        rightFirePressed =
+            rightPressed;
+
+    }
+
+
     requestAnimationFrame(
         updateGamepads
     );
 
 }
 
-updateGamepads();
+updateGamepads();     
+                
+
+
 /* =========================================================
    30秒タイマー
 ========================================================= */
