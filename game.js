@@ -1516,39 +1516,6 @@ const rabbit2 = addTarget(
     140
 );
 
-const rabbitTargets = [rabbit1, rabbit2].filter(Boolean);
-
-let rabbitDirection = 1;
-let rabbitSteps = 0;
-
-setInterval(function () {
-
-    rabbitTargets.forEach(function (rabbit) {
-
-        const currentX = parseFloat(rabbit.style.left);
-
-        rabbit.style.transition = "left 2s ease-in-out";
-
-        rabbit.style.left =
-            (currentX + 10 * rabbitDirection) + "px";
-
-        rabbit.classList.remove("rabbit-jump");
-
-        void rabbit.offsetWidth;
-
-        rabbit.classList.add("rabbit-jump");
-    });
-
-    rabbitSteps++;
-
-    if (rabbitSteps >= 3) {
-        rabbitDirection *= -1;
-        rabbitSteps = 0;
-    }
-
-}, 2000);
-
-
 /* =========================================================
    🐱 猫 400点
 ========================================================= */
