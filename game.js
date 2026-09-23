@@ -2447,28 +2447,3 @@ updateScores();
 console.log(
     "ゲームプログラム読み込み完了"
 );
-
-function checkGamepads() {
-    const pads = navigator.getGamepads();
-
-    console.clear();
-
-    for (const pad of pads) {
-        if (!pad) continue;
-
-        console.log("===== GAMEPAD =====");
-        console.log("index:", pad.index);
-        console.log("id:", pad.id);
-        console.log("axes:", Array.from(pad.axes));
-        console.log(
-            "buttons:",
-            Array.from(pad.buttons).map((b, i) => ({
-                index: i,
-                pressed: b.pressed,
-                value: b.value
-            }))
-        );
-    }
-}
-
-setInterval(checkGamepads, 1000);
