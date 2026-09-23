@@ -1698,7 +1698,7 @@ function startGakkiTarget() {
             5000,
             650,
             160,
-            160
+            100
         );
 
         if (!gakki) {
