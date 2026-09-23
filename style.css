@@ -387,61 +387,7 @@ h1 {
    最終結果画面
 ========================= */
 
-#final-score {
-    position:absolute;
-    left:0;
-    top:0;
-    width:1024px;
-    height:661px;
-    z-index:300;
 
-    display:flex;
-    flex-direction:row;
-    justify-content:space-around;
-
-    /* ← 点数全体を上にする */
-    align-items:flex-start;
-
-    pointer-events:none;
-
-    background-image:url("背景最後.png");
-    background-size:cover;
-    background-position:center;
-
-    font-family:Arial,sans-serif;
-    font-weight:bold;
-    text-align:center;
-}
-
-/* 左の点数 */
-.final-left {
-    width:45%;
-    font-size:100px;
-    text-align:center;
-
-    /* ← 上からの位置 */
-    margin-top:110px;
-
-    /* 青 */
-    color:blue;
-
-    text-shadow:4px 4px 8px rgba(0,0,0,.7);
-}
-
-/* 右の点数 */
-.final-right {
-    width:45%;
-    font-size:100px;
-    text-align:center;
-
-    /* ← 上からの位置 */
-    margin-top:110px;
-
-    /* 赤 */
-    color:red;
-
-    text-shadow:4px 4px 8px rgba(0,0,0,.7);
-}
 
 /*=========================
    結果表示中
