@@ -1,3 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap');
+
+html,
+body {
+    font-family: 'Fredoka', sans-serif;
+}
+
 html,
 body {
     width: 100%;
@@ -736,4 +743,76 @@ h1 {
     object-fit: contain;
 
     display: block;
+}
+
+#practice-text {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 60px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+#countdown,
+#game-countdown {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 800;
+}
+
+/* =========================================================
+   🎀 ゲーム内フォントを全部かわいく統一
+========================================================= */
+
+body,
+button,
+h1,
+#score,
+#timer,
+#practice-text,
+#countdown,
+#game-countdown,
+.stage1-title,
+.gakki-message {
+    font-family: 'Fredoka', sans-serif;
+}
+
+/* スコア */
+#score {
+    font-weight: 600;
+}
+
+/* タイマー */
+#timer {
+    font-weight: 600;
+}
+
+/* STARTボタン */
+#start-button {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+}
+
+/* 練習画面 */
+#practice-text {
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+/* 3・2・1 */
+#countdown {
+    font-weight: 700;
+}
+
+/* 残り5秒 */
+#game-countdown {
+    font-weight: 700;
+}
+
+/* STAGE 1 */
+.stage1-title {
+    font-weight: 700;
+}
+
+/* ガッキー説明 */
+.gakki-message {
+    font-weight: 600;
 }

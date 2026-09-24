@@ -1663,56 +1663,88 @@ setInterval(function () {
 
 /* =========================
    5000点「がっき」
-   1ゲームにつき1回
+   1ゲームにつき2回出現
 ========================= */
 
-let gakkiShown = false;
-let gakkiTimer = null;
+let gakkiTimers = [];
+
+function showGakki() {
+
+    if (!gameStarted || gameOver) {
+        return;
+    }
+
+    const gakki = addTarget(
+        "gakki-targets",
+        "gakki.png",
+        5000,
+        650,
+        160,
+        100
+    );
+
+    if (!gakki) {
+        console.log("がっき.pngを作れませんでした");
+        return;
+    }
+
+    console.log("5000点のがっきが出現！");
+
+    /* 2秒後に消す */
+    setTimeout(function () {
+
+        gakki.style.display = "none";
+
+    }, 2000);
+}
+
 
 function startGakkiTarget() {
 
-    // 新しいゲームなのでリセット
-    gakkiShown = false;
+    /* 前回のタイマーを消す */
+    gakkiTimers.forEach(function (timer) {
+        clearTimeout(timer);
+    });
 
-    if (gakkiTimer) {
-        clearTimeout(gakkiTimer);
-        gakkiTimer = null;
-    }
+    gakkiTimers = [];
 
-    // 5～25秒の間でランダムに出現
-    const randomTime = 5000 + Math.random() * 20000;
 
-    gakkiTimer = setTimeout(function () {
+    /* =========================
+       1回目
+       5～10秒後
+    ========================= */
 
-        if (!gameStarted || gameOver || gakkiShown) {
-            return;
-        }
+    const firstTime =
+        5000 + Math.random() * 5000;
 
-        gakkiShown = true;
 
-        // 固定位置
-        const gakki = addTarget(
-            "gakki-targets",
-            "gakki.png",
-            5000,
-            650,
-            160,
-            100
-        );
+    const timer1 = setTimeout(function () {
 
-        if (!gakki) {
-            console.log("がっき.pngを作れませんでした");
-            return;
-        }
+        showGakki();
 
-        console.log("5000点のがっきが出現！");
+    }, firstTime);
 
-        // 2秒後に消す
-        setTimeout(function () {
-            gakki.style.display = "none";
-        }, 2000);
 
-    }, randomTime);
+    gakkiTimers.push(timer1);
+
+
+    /* =========================
+       2回目
+       17～22秒後
+    ========================= */
+
+    const secondTime =
+        17000 + Math.random() * 5000;
+
+
+    const timer2 = setTimeout(function () {
+
+        showGakki();
+
+    }, secondTime);
+
+
+    gakkiTimers.push(timer2);
 }
 
  /* =========================================================
@@ -2145,7 +2177,7 @@ setTimeout(function () {
 
         startCountdown();
 
-    }, 3000);
+    }, 5000);
 
 }, 10000);                           
                                                                                             
