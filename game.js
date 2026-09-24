@@ -2290,66 +2290,33 @@ else {
 ========================================================= */
 
 function resizeGame() {
-
-    const game =
-        document.getElementById("game");
-
+    const game = document.getElementById("game");
     if (!game) return;
 
     const GAME_WIDTH = 1024;
     const GAME_HEIGHT = 661;
 
-    /* -----------------------------------------
-       MacBook画面に合わせて倍率を計算
-    ----------------------------------------- */
+    const scaleX = window.innerWidth / GAME_WIDTH;
+    const scaleY = window.innerHeight / GAME_HEIGHT;
 
-    const scaleX =
-        window.innerWidth / GAME_WIDTH;
+    game.style.width = GAME_WIDTH + "px";
+    game.style.height = GAME_HEIGHT + "px";
 
-    const scaleY =
-        window.innerHeight / GAME_HEIGHT;
-
-    const scale =
-        Math.min(scaleX, scaleY);
-
-    /* -----------------------------------------
-       ゲーム本体
-    ----------------------------------------- */
-
-    game.style.width =
-        GAME_WIDTH + "px";
-
-    game.style.height =
-        GAME_HEIGHT + "px";
-
-    /* -----------------------------------------
-       ゲーム全体を拡大・縮小
-    ----------------------------------------- */
-
+    // 横・縦をそれぞれ画面いっぱいまで拡大
     game.style.transform =
-        "scale(" + scale + ")";
+        "scaleX(" + scaleX + ") scaleY(" + scaleY + ")";
 
-    /* -----------------------------------------
-       画面の中央に配置
-    ----------------------------------------- */
+    game.style.left = "0px";
+    game.style.top = "0px";
 
-    game.style.left =
-        ((window.innerWidth -
-        GAME_WIDTH * scale) / 2) + "px";
-
-    game.style.top =
-        ((window.innerHeight -
-        GAME_HEIGHT * scale) / 2) + "px";
+    // 変形の基準点
+    game.style.transformOrigin = "top left";
 }
 
-/* 画面サイズが変わったとき */
-window.addEventListener(
-    "resize",
-    resizeGame
-);
-
-/* 最初に実行 */
+window.addEventListener("resize", resizeGame);
 resizeGame();
+
+
     
 /* =========================================================
    初期化
