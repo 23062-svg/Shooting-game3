@@ -1,6 +1,7 @@
 
 const hitSound = new Audio("pon.mp3");
 
+const stage1Intro = document.getElementById("stage1-intro");
 /* =========================================================
    2人プレイ・シューティングゲーム
    マウス + Joy-Con 2台
@@ -278,7 +279,6 @@ const clickX =
 const clickY =
     (event.clientY - gameRect.top) /
     scaleY;
-
 
             /* 透明部分ならハズレ */
 
@@ -860,7 +860,6 @@ if (purple) {
 
 }
 
-
 /* =========================================================
    🟡 黄色のアヒル
    1回目に当てる → 300点
@@ -918,7 +917,6 @@ const yellowTargets = [
     duck5
 ].filter(Boolean);
 
-
 /* =========================================================
    アヒル専用処理
 ========================================================= */
@@ -950,7 +948,6 @@ yellowTargets.forEach(function (duck) {
         if (!gameStarted || gameOver) {
             return;
         }
-
 
         /* =====================================
            1回目
@@ -992,7 +989,6 @@ yellowTargets.forEach(function (duck) {
 
             return;
         }
-
 
         /* =====================================
            2回目以降
@@ -1040,7 +1036,6 @@ yellowTargets.forEach(function (duck) {
     };
 
 });
-
 
 /* =========================================================
    アヒル移動
@@ -1180,7 +1175,6 @@ const greenTargets = [
 
 ].filter(Boolean);
 
-
 /* =========================================================
    緑のアヒル専用処理
 ========================================================= */
@@ -1218,7 +1212,6 @@ greenTargets.forEach(function (duck) {
         if (!gameStarted || gameOver) {
             return;
         }
-
 
         /* =========================
            1回目
@@ -1258,7 +1251,6 @@ greenTargets.forEach(function (duck) {
             return;
         }
 
-
         /* =========================
            2回目以降
            → 300点
@@ -1288,7 +1280,6 @@ greenTargets.forEach(function (duck) {
 
             }, 600);
 
-
             /* 5秒後に復活 */
 
             setTimeout(function () {
@@ -1305,7 +1296,6 @@ greenTargets.forEach(function (duck) {
 
 });
 
-
 /* =========================================================
    緑のアヒル移動
 ========================================================= */
@@ -1313,7 +1303,6 @@ greenTargets.forEach(function (duck) {
 let greenDirection = 1;
 
 const greenSpeed = 0.6;
-
 
 function moveGreenTargets() {
 
@@ -1338,11 +1327,9 @@ function moveGreenTargets() {
 
     });
 
-
     if (greenTargets.length === 0) {
         return;
     }
-
 
     const visibleTargets =
         greenTargets.filter(function (target) {
@@ -1353,7 +1340,6 @@ function moveGreenTargets() {
             );
 
         });
-
 
     if (visibleTargets.length > 0) {
 
@@ -1373,7 +1359,6 @@ function moveGreenTargets() {
             ) +
             lastTarget.offsetWidth;
 
-
         if (
             leftEdge <= waterLeft ||
             rightEdge >= waterRight
@@ -1385,7 +1370,6 @@ function moveGreenTargets() {
 
     }
 
-
     requestAnimationFrame(
         moveGreenTargets
     );
@@ -1393,7 +1377,6 @@ function moveGreenTargets() {
 }
 
 moveGreenTargets();
-
 
 /* =========================================================
    🟠 アライグマ 300点
@@ -1549,7 +1532,6 @@ addTarget(
     100
 );
 
-
 /* =========================================================
    🐐 やぎ 600点
    山を登るように移動
@@ -1624,7 +1606,6 @@ const sparrowTargets = [
     sparrow2
 ].filter(Boolean);
 
-
 /* =========================
    スズメの移動
 ========================= */
@@ -1652,7 +1633,6 @@ function moveSparrow(sparrow, delay) {
     }, delay);
 }
 
-
 /* =========================
    最初の飛行
 ========================= */
@@ -1662,7 +1642,6 @@ moveSparrow(sparrow1, 0);
 
 // 3秒後に2匹目
 moveSparrow(sparrow2, 3000);
-
 
 /* =========================
    繰り返し
@@ -1736,7 +1715,6 @@ function startGakkiTarget() {
     }, randomTime);
 }
 
-
  /* =========================================================
    Joy-Con接続
 ========================================================= */
@@ -1751,8 +1729,29 @@ window.addEventListener(
             event.gamepad.id
         );
 
+        console.log(
+            "ボタン数:",
+            event.gamepad.buttons.length
+        );
+
+        event.gamepad.buttons.forEach(
+            function(button, index) {
+
+                console.log(
+                    "button",
+                    index,
+                    "pressed:",
+                    button.pressed
+                );
+
+            }
+        );
+
     }
-);
+);      
+
+    
+        
 
 window.addEventListener(
     "gamepaddisconnected",
@@ -1800,8 +1799,7 @@ function updateGamepads() {
         leftCursor.style.left = leftX + "px";
         leftCursor.style.top = leftY + "px";
 
-
-        const pressed = !!joyCon0.buttons[13]?.pressed;
+        const pressed = !!joyCon0.buttons[6]?.pressed;
 
         if (pressed && !leftFirePressed) {
             shootAt(leftX, leftY, "left");
@@ -1809,7 +1807,6 @@ function updateGamepads() {
 
         leftFirePressed = pressed;
     }
-
 
     // =========================
     // 🩵 PLAYER 2
@@ -1841,7 +1838,7 @@ function updateGamepads() {
         rightCursor.style.left = rightX + "px";
         rightCursor.style.top = rightY + "px";
 
-        const pressed = !!joyCon1.buttons[3]?.pressed;
+        const pressed = !!joyCon1.buttons[7]?.pressed;
 
         if (pressed && !rightFirePressed) {
             shootAt(rightX, rightY, "right");
@@ -1854,9 +1851,6 @@ function updateGamepads() {
 }
 
 updateGamepads();
-
-
-
 
 function startGameTimer() {
 
@@ -2104,172 +2098,59 @@ if (practiceTarget2) {
 
 practiceText.style.display = "block";
 
-            /* 10秒後 */
+/* =========================
+   10秒後に練習終了
+========================= */
 
-            setTimeout(
-                function () {
+setTimeout(function () {
 
-                    /* 練習終了 */
+    /* 練習終了 */
+    practiceMode = false;
 
-                    practiceMode =
-                        false;
+    /* 練習の的を消す */
+    if (practiceTarget1) {
+        practiceTarget1.style.display = "none";
+    }
 
-                    /* 練習の的を消す */
+    if (practiceTarget2) {
+        practiceTarget2.style.display = "none";
+    }
 
-                    if (practiceTarget1) {
+    /* 練習画面を消す */
+    practiceTargets.style.display = "none";
 
-                        practiceTarget1.style.display =
-                            "none";
+    /* 練習文字を消す */
+    practiceText.style.display = "none";
 
-                    }
+    /* START画面を消す */
+    if (startScreen) {
+        startScreen.style.display = "none";
+    }
 
-                    if (practiceTarget2) {
+    /* =========================
+       STAGE 1 説明画面
+    ========================= */
 
-                        practiceTarget2.style.display =
-                            "none";
+    stage1Intro.style.display = "flex";
 
-                    }
+    /* 3秒間表示 */
 
-                    const practiceContainer =
-                        document.getElementById(
-                            "practice-targets"
-                        );
+    setTimeout(function () {
 
-                    if (practiceContainer) {
+        stage1Intro.style.display = "none";
 
-                        practiceContainer.style.display =
-                            "none";
+        /* =========================
+           3・2・1
+        ========================= */
 
-                    }
+        startCountdown();
 
-                    /* 練習文字も消す */
+    }, 3000);
 
-                    const practiceText =
-                        document.getElementById(
-                            "practice-text"
-                        );
+}, 10000);                           
+                                                                                            
 
-                    if (practiceText) {
-
-                        practiceText.style.display =
-                            "none";
-
-                    }
-
-                    /* スタート背景を消す */
-
-                    if (startScreen) {
-
-                        startScreen.style.display =
-                            "none";
-
-                    }
-
-                    /* 3・2・1 */
-
-                    if (countdown) {
-
-                        countdown.style.display =
-                            "flex";
-
-                        let count = 3;
-
-                        countdown.textContent =
-                            count;
-
-                        const countdownTimer =
-                            setInterval(
-                                function () {
-
-                                    count--;
-
-                                    if (
-                                        count > 0
-                                    ) {
-
-                                        countdown.textContent =
-                                            count;
-
-                                    }
-
-                                    else {
-
-                                        clearInterval(
-                                            countdownTimer
-                                        );
-
-                                        countdown.style.display =
-                                            "none";
-
-                                        /* 幕を開ける */
-
-                                        gameArea.classList.remove(
-                                            "curtain-close"
-                                        );
-
-                                        gameArea.classList.add(
-                                            "curtain-open"
-                                        );
-
-                                        /* 本番開始 */
-
-                                        gameStarted =
-                                            true;
-
-                                        gameOver =
-                                            false;
-
-                                        /* 5000点のがっきを開始 */
-                                        startGakkiTarget();
-
-                                        /* 得点リセット */
-
-                                        leftScore =
-                                            0;
-
-                                        rightScore =
-                                            0; 
-                                                                                                    updateScores();
-
-                                        /* タイマー開始 */
-
-                                        startGameTimer();
-
-                                        /* 本番用の的を表示 */
-
-                                        document
-                                            .querySelectorAll(
-                                                "#game img.shooting-target"
-                                            )
-                                            .forEach(
-                                                function (target) {
-
-                                                    if (
-                                                        target !==
-                                                        practiceTarget1 &&
-                                                        target !==
-                                                        practiceTarget2
-                                                    ) {
-
-                                                        target.style.display =
-                                                            "block";
-
-                                                    }
-
-                                                }
-                                            );
-
-                                    }
-
-                                },
-                                1000
-                            );
-
-                    }
-
-                },
-                10000
-            );
+                                                                                                                             
 
         }
     );
@@ -2316,7 +2197,6 @@ function resizeGame() {
 window.addEventListener("resize", resizeGame);
 resizeGame();
 
-
     
 /* =========================================================
    初期化
@@ -2327,3 +2207,102 @@ updateScores();
 console.log(
     "ゲームプログラム読み込み完了"
 );
+
+function startCountdown() {
+
+    const countdown = document.getElementById("countdown");
+
+    countdown.style.display = "flex";
+
+    let count = 3;
+
+    countdown.textContent = count;
+
+    const countdownTimer = setInterval(() => {
+
+        count--;
+
+        if (count > 0) {
+
+            countdown.textContent = count;
+
+        } else {
+
+            clearInterval(countdownTimer);
+
+            countdown.style.display = "none";
+
+            // 本番開始
+            startMainGame();
+
+        }
+
+    }, 1000);
+}
+
+function startMainGame() {
+
+    /* =========================
+       本番開始
+    ========================= */
+
+    gameStarted = true;
+    gameOver = false;
+    practiceMode = false;
+
+    /* 得点リセット */
+
+    leftScore = 0;
+    rightScore = 0;
+
+    updateScores();
+
+    /* =========================
+       幕を開ける
+    ========================= */
+
+    gameArea.classList.remove(
+        "curtain-close"
+    );
+
+    gameArea.classList.add(
+        "curtain-open"
+    );
+
+    /* =========================
+       ガッキー5000点開始
+    ========================= */
+
+    startGakkiTarget();
+
+    /* =========================
+       本番用の的を表示
+    ========================= */
+
+    document
+        .querySelectorAll(
+            "#game img.shooting-target"
+        )
+        .forEach(
+            function (target) {
+
+                if (
+                    target !== practiceTarget1 &&
+                    target !== practiceTarget2
+                ) {
+
+                    target.style.display =
+                        "block";
+
+                }
+
+            }
+        );
+
+    /* =========================
+       30秒タイマー開始
+    ========================= */
+
+    startGameTimer();
+
+}

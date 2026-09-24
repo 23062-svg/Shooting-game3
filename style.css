@@ -663,3 +663,77 @@ h1 {
 #gakki-targets .shooting-target {
     pointer-events: auto;
 }
+/* =========================
+   STAGE 1 説明画面
+========================= */
+
+#stage1-intro {
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    width: 1024px;
+    height: 661px;
+
+    background: #8edcff;
+
+    z-index: 230;
+
+    display: none;
+
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    pointer-events: none;
+}
+
+
+/* STAGE 1 */
+
+.stage1-title {
+    font-size: 110px;
+    font-weight: bold;
+
+    color: white;
+
+    text-shadow:
+        6px 6px 0 #2374a8,
+        -3px -3px 0 #2374a8,
+        3px -3px 0 #2374a8,
+        -3px 3px 0 #2374a8;
+
+    margin-bottom: 15px;
+}
+
+
+/* ガッキーは高得点！ */
+
+.gakki-message {
+    font-size: 55px;
+    font-weight: bold;
+
+    color: #fff7d6;
+
+    text-shadow:
+        4px 4px 0 #8b5a2b,
+        -2px -2px 0 #8b5a2b,
+        2px -2px 0 #8b5a2b,
+        -2px 2px 0 #8b5a2b;
+
+    margin-bottom: 10px;
+}
+
+
+/* ガッキー画像 */
+
+#gakki-intro-image {
+    width: 180px;
+    height: 180px;
+
+    object-fit: contain;
+
+    display: block;
+}
