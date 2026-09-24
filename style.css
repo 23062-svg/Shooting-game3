@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap');
 
 html,
 body {
@@ -815,4 +814,12 @@ h1,
 /* ガッキー説明 */
 .gakki-message {
     font-weight: 600;
+}
+/* 🎀 ゲーム全体をFredokaに統一 */
+* {
+    font-family: 'Fredoka', sans-serif;
+}
+
+button {
+    font-family: 'Fredoka', sans-serif;
 }
