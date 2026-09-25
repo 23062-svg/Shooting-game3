@@ -1,3 +1,8 @@
+html,
+body,
+body * {
+    font-family: "Fredoka", sans-serif !important;
+}
 
 html,
 body {
@@ -815,11 +820,21 @@ h1,
 .gakki-message {
     font-weight: 600;
 }
-/* 🎀 ゲーム全体をFredokaに統一 */
-* {
-    font-family: 'Fredoka', sans-serif;
+/* 🎀 ゲームの基本文字をかわいく */
+html,
+body,
+body * {
+    font-family: "Arial Rounded MT Bold", "Arial Rounded MT", sans-serif !important;
 }
 
-button {
-    font-family: 'Fredoka', sans-serif;
+/* 🔢 数字は元のフォントに戻す */
+#countdown,
+#game-countdown,
+.stage1-title {
+    font-family: 'Baloo 2', sans-serif !important;
+}
+
+/* 🎮 STAGE 1も元のフォントに戻す */
+.stage1-title {
+    font-family: sans-serif !important;
 }
